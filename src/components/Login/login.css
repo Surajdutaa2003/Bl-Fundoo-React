@@ -1,0 +1,178 @@
+/* Center the entire login container */
+.login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #ffffff;
+    padding: 20px; /* Ensures spacing on small screens */
+}
+
+/* Login box */
+.login-box {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 350px; /* Prevents it from being too wide */
+    text-align: center;
+}
+
+/* Fundo brand name */
+.brand-name {
+    font-size: 18px;
+    font-weight: bold;
+    color: #ffb900;
+    margin-bottom: 5px;
+}
+
+/* Title */
+.login-title {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    margin-top: 7px;
+}
+
+/* Subtitle */
+.subtitle {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 26px;
+    margin-top: 10px;
+}
+
+/* Input Fields */
+.login-form input {
+    width: 100%;
+    padding: 13px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+/* Forgot Password & Create Account */
+.login-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+}
+
+/* Left side links */
+.left-links {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.forgot-password,
+.create-account {
+    font-size: 13px;
+    color: blue;
+    text-decoration: none;
+    margin-bottom: 26px;
+}
+
+/* Login Button */
+.login-btn {
+    background-color: #3b60f6;
+    color: white;
+    padding: 8px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: background 0.3s ease;
+}
+
+.login-btn:hover {
+    background-color: #2a4df7;
+}
+
+/* Bottom Section (Outside Box) */
+.bottom-section {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 350px;
+    margin-top: 15px;
+    font-size: 12px;
+    color: gray;
+    flex-wrap: wrap; /* Allows items to wrap on small screens */
+}
+
+/* Language Dropdown */
+.language {
+    text-align: left;
+}
+
+/* Policy Links */
+.policy-links {
+    display: flex;
+    gap: 15px;
+}
+
+.policy-links a {
+    text-decoration: none;
+    color: #555;
+}
+
+/* ✅ RESPONSIVENESS */
+
+/* Small devices (phones) */
+@media (max-width: 480px) {
+    .login-box {
+        padding: 20px; /* Reduce padding */
+    }
+
+    .login-title {
+        font-size: 20px;
+    }
+
+    .login-form input {
+        padding: 10px;
+        font-size: 12px;
+    }
+
+    .login-btn {
+        font-size: 12px;
+        padding: 6px 15px;
+    }
+
+    .login-footer {
+        flex-direction: column; /* Stack elements */
+        align-items: center;
+    }
+
+    .left-links {
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .bottom-section {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+}
+
+/* Medium devices (tablets) */
+@media (max-width: 768px) {
+    .login-container {
+        padding: 40px 20px; /* Add padding */
+    }
+
+    .login-box {
+        width: 90%;
+        max-width: 400px;
+    }
+
+    .login-title {
+        font-size: 22px;
+    }
+}

@@ -1,0 +1,206 @@
+/* Main container */
+.register-container {
+    display: flex;
+    flex-direction: column; /* Header ke liye space */
+    align-items: center;
+    height: 100vh;
+    background-color: #f8f9fa;
+    padding: 10px;
+}
+
+/* Header (Fixing missing header issue) */
+.register-header {
+    width: 100%;
+    text-align: center;
+    padding: 15px;
+    font-size: 22px;
+    font-weight: bold;
+    color: #ffba00;
+}
+
+/* Register box */
+.register-box {
+    display: flex;
+    width: 517px;
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    align-items: center;
+}
+
+/* Left Section */
+.register-left {
+    flex: 1;
+    padding: 10px;
+}
+
+.title {
+    font-size: 22px;
+    color: #ffba00;
+    font-weight: bold;
+}
+
+.subtitle {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+/* Input fields */
+.register-form input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+/* Input Group */
+.input-group {
+    display: flex;
+    gap: 10px;
+}
+
+/* Hint Text */
+.hint {
+    font-size: 12px;
+    color: gray;
+    margin-bottom: 8px;
+}
+
+/* Register footer */
+.register-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 12px;
+}
+
+/* Sign-in link */
+.signin-link {
+    color: blue;
+    text-decoration: none;
+    font-size: 13px;
+}
+
+/* Register button */
+.register-btn {
+    background-color: #4285f4;
+    color: white;
+    padding: 8px 18px;
+    border: none;
+    border-radius: 5px;
+    font-size: 13px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Right Section (Image) */
+.register-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.banner-img {
+    width: 221px;
+    height: auto;
+    margin-top: 45px;
+    margin-bottom: -19px;
+}
+
+/* Description Text */
+.description {
+    text-align: center;
+    font-size: 17px;
+    color: black;
+}
+
+/* =================== Responsive Media Queries =================== */
+
+/* Tablets (max-width: 768px) */
+@media (max-width: 768px) {
+    .register-container {
+        padding-top: 30px; /* Header space fix */
+    }
+
+    .register-box {
+        width: 90%;
+        flex-direction: column;
+        padding: 20px;
+    }
+
+    .register-header {
+        font-size: 20px;
+    }
+
+    .register-left, .register-right {
+        width: 100%;
+        text-align: center;
+    }
+
+    .input-group {
+        flex-direction: column; /* Stack inputs */
+    }
+
+    .register-footer {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .signin-link {
+        margin-bottom: 10px;
+    }
+
+    .register-btn {
+        width: 100%;
+    }
+
+    .banner-img {
+        width: 180px;
+        margin-top: 20px;
+    }
+
+    .description {
+        font-size: 14px;
+    }
+}
+
+/* Mobile (max-width: 480px) */
+@media (max-width: 480px) {
+    .register-container {
+        padding-top: 20px; /* Ensure header is visible */
+    }
+
+    .register-box {
+        width: 100%;
+        padding: 15px;
+    }
+
+    .register-header {
+        font-size: 18px;
+    }
+
+    .title {
+        font-size: 20px;
+    }
+
+    .subtitle {
+        font-size: 14px;
+    }
+
+    .register-form input {
+        padding: 10px;
+    }
+
+    .banner-img {
+        width: 150px;
+    }
+
+    .description {
+        font-size: 12px;
+    }
+}

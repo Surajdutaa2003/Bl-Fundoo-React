@@ -1,0 +1,243 @@
+/* General Layout */
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.dashboard-container {
+  display: flex;
+  flex: 1;
+  min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 220px;
+  background: #fef9c3;
+  padding: 20px;
+  transition: width 0.3s ease-in-out;
+}
+
+.sidebar.collapsed {
+  width: 60px;
+}
+
+.sidebar-item {
+  text-decoration: none; /* Removes underline */
+  color: inherit; /* Keeps text color same as parent */
+  font-size: 18px;
+  padding: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.sidebar.collapsed .sidebar-item span {
+  display: none;
+}
+
+.sidebar-item:hover,
+.sidebar-item.active {
+  background: #ffeb3b;
+  border-radius: 5px;
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 20px;
+  background: white;
+  height: 74px;
+  border-bottom: 1px solid #ccc;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+}
+
+.keep-logo {
+  width: 48px;
+  height: 48px;
+  margin-right: 10px;
+}
+
+.h1 {
+  font-size: 24px;
+  font-weight: bold;
+  color: black;
+}
+
+/* Search Bar */
+.search-bar {
+  position: relative;
+  flex: 1;
+  max-width: 600px;
+  width: 40%;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  background-color: #f1f3f4;
+  transition: 0.3s ease-in-out;
+  height: 29px;
+  left: 40px;
+}
+
+.search-bar:focus {
+  outline: none;
+  border-color: #6200ea;
+  background-color: white;
+}
+
+@media (max-width: 600px) {
+  .search-bar {
+    max-width: 100%;
+    width: 100%;
+  }
+}
+
+/* Profile Icon */
+.profile-icon {
+  width: 40px;
+  height: 40px;
+  background-color: #6200ea;
+  color: white;
+  font-size: 18px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  cursor: pointer;
+  margin-left: auto;
+}
+
+/* Notes Section */
+.notes-section {
+  flex: 1;
+  padding: 20px;
+}
+
+/* Note Input */
+.note-input {
+  background: white;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.15);
+  max-width: 500px;
+  margin: 0 auto;
+  cursor: pointer;
+}
+
+.note-input input {
+  width: 92%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* Notes Grid */
+.notes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+  margin-top: 20px;
+}
+
+/* Note Card */
+.note-card {
+  position: relative;
+  background: white;
+  padding: 12px;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 300px;
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+/* Hover Effect */
+.note-card:hover {
+  transform: scale(1.03);
+}
+
+/* Hide Icons by Default */
+.note-card .selected-check,
+.note-card .pin-icon,
+.note-card .note-actions {
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+/* Show Icons on Hover */
+.note-card:hover .selected-check,
+.note-card:hover .pin-icon,
+.note-card:hover .note-actions {
+  opacity: 1;
+}
+
+/* Selected Check Icon (Top Left) */
+.selected-check {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background-color: black;
+  color: white;
+  border-radius: 50%;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+/* Pin Icon (Top Right) */
+.pin-icon {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  cursor: pointer;
+  color: #5f6368;
+  transition: color 0.2s ease-in-out;
+}
+
+.pin-icon:hover {
+  color: #202124;
+}
+
+/* Note Actions (Bottom) */
+.note-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 10px;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.note-actions .MuiSvgIcon-root {
+  font-size: 20px;
+  color: #5f6368;
+  cursor: pointer;
+  transition: color 0.2s ease-in-out;
+}
+
+.note-actions .MuiSvgIcon-root:hover {
+  color: #202124;
+}
+.sidebar-item.active {
+  background-color: #f7ef0b9e;
+  font-weight: bold;
+}
+
+/* working */
