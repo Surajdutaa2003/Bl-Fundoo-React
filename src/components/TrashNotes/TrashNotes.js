@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import NoteCard from "../NotesContainer/NoteCard";
 import "../DashboardContainer/Dashboard.css";
 import { getTrashNotes } from "../../services/api";
@@ -26,13 +26,15 @@ function TrashNotes() {
     }
   };
 
-  const filteredNotes = trashedNotes.filter(
-    (note) =>
-      note.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      note.description?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredNotes = useMemo(() => {
+    return trashedNotes.filter(
+      (note) =>
+        note.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        note.description?.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [trashedNotes, searchQuery]); // Dependencies: trashedNotes and searchQuery**
 
-  const updateNotesList = (updatedNote, action) => {
+  const updateNotesList = useCallback((updatedNote, action) => {
     if (action === "delete" || action === "restore" || action === "deleteForever") {
       setTrashedNotes((prev) => prev.filter((note) => note.id !== updatedNote.id));
     } else if (action === "update") {
@@ -40,7 +42,7 @@ function TrashNotes() {
         note.id === updatedNote.id ? updatedNote : note
       ));
     }
-  };
+  }, []); // No dependencies since it only updates state**
 
   return (
     <div className="notes-section">

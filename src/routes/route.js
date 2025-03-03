@@ -22,7 +22,7 @@ const router = createBrowserRouter([
     children: [
       { path: "", element: <Notes /> },
       { path: "archive", element: <Archive /> },
-      { path: "trash", element: <TrashNotes/> },
+      { path: "trash", element: <TrashNotes /> },
     ],
   },
   { path: "*", element: <h1>404 Page Not Found</h1> },

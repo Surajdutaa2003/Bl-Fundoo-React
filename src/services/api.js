@@ -14,15 +14,30 @@ const getAuthToken = () => {
 };
 
 // User login
+// export const loginUser = async (email, password) => {
+//   try {
+//     const response = await axios.post(`${BASE_URL}/login`, { email, password });
+
+//     if (response.data) {
+//       localStorage.setItem("fundoo-token", response.data.id); // Save token
+//       localStorage.setItem("userEmail", email); // Save email in localStorage
+//     }
+
+//     return response.data;
+//   } catch (error) {
+//     console.error("❌ Login failed:", error.response?.data?.message || error.message);
+//     throw error.response?.data?.message || "Login failed";
+//   }
+// };
 export const loginUser = async (email, password) => {
   try {
-    const response = await axios.post(`${BASE_URL}/login`, { email, password });
-
+    const response = await axios.post(`${BASE_URL}/login`, { email, password }, {
+      headers: { Authorization: getAuthToken() }, // If needed
+    });
     if (response.data) {
-      localStorage.setItem("fundoo-token", response.data.id); // Save token
-      localStorage.setItem("userEmail", email); // Save email in localStorage
+      localStorage.setItem("fundoo-token", response.data.id); // Assuming this is your token
+      localStorage.setItem("userEmail", email); // Store the email
     }
-
     return response.data;
   } catch (error) {
     console.error("❌ Login failed:", error.response?.data?.message || error.message);
