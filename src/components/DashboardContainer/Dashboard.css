@@ -127,19 +127,117 @@
 .note-input {
   background: white;
   padding: 10px;
-  border-radius: 8px;
-  box-shadow: 2px 4px 8px rgba(0, 0, 0, 0.15);
-  max-width: 500px;
-  margin: 0 auto;
+  border-radius: 16px; /* Increased for more rounded corners like the image */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow like the image */
+  max-width: 600px; /* Adjusted to match the image width */
+  margin: 0 auto 20px; /* Space below the input */
+  transition: all 0.3s ease;
   cursor: pointer;
 }
 
-.note-input input {
-  width: 92%;
+/* Collapsed Note Input */
+.collapsed-note-input {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Aligns placeholder and icons properly */
+  gap: 10px;
+  padding: 8px; /* Reduced padding for tighter fit */
+}
+
+.note-input-field {
+  flex: 1;
+  padding: 8px; /* Reduced padding for tighter fit */
+  font-size: 16px;
+  border: none; /* Removed border for cleaner look */
+  outline: none;
+  background: transparent;
+  color: #757575; /* Light gray text like the image */
+}
+
+/* Note Input Icons */
+.note-input-icons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto; /* Pushes icons to the right */
+}
+
+.note-input-icons .MuiSvgIcon-root {
+  font-size: 20px;
+  color: #5f6368;
+  cursor: pointer;
+  transition: color 0.2s ease-in-out;
+}
+
+.note-input-icons .MuiSvgIcon-root:hover {
+  color: #202124;
+}
+
+/* Expanded Note Input */
+.expanded-note-input {
+  padding: 15px;
+}
+
+.note-input-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.note-input-title {
+  width: 100%;
+  padding: 8px;
+  font-size: 18px;
+  font-weight: bold;
+  border: none;
+  border-bottom: 1px solid #ccc;
+  outline: none;
+  background: transparent;
+}
+
+.note-input-description {
+  width: 100%;
+  min-height: 100px;
   padding: 10px;
   font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  border: none;
+  outline: none;
+  resize: none;
+  background: transparent;
+  margin-bottom: 10px;
+}
+
+.note-input-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px; /* Space above actions */
+}
+
+.pin-icon {
+  color: #5f6368;
+  transition: color 0.2s ease-in-out;
+}
+
+.pin-icon:hover {
+  color: #202124;
+}
+
+.close-button {
+  margin-left: auto;
+  padding: 5px 15px;
+  font-size: 14px;
+  border: none;
+  background: transparent;
+  color: #5f6368;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: color 0.2s ease-in-out;
+
+  &:hover {
+    color: #202124;
+  }
 }
 
 /* Notes Grid */
@@ -235,9 +333,8 @@
 .note-actions .MuiSvgIcon-root:hover {
   color: #202124;
 }
+
 .sidebar-item.active {
   background-color: #f7ef0b9e;
   font-weight: bold;
 }
-
-/* working */
