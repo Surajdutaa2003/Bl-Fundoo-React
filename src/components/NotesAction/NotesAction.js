@@ -122,6 +122,18 @@ const NoteActions = ({ handleNoteList, note, container, onColorChange }) => {
       )}
       {container === "archive" && (
         <>
+          <IconButton size="small">
+            <NotificationsNoneIcon />
+          </IconButton>
+          <IconButton size="small">
+            <PersonAddIcon />
+          </IconButton>
+          <IconButton size="small" onClick={handleColorMenuOpen}>
+            <PaletteIcon />
+          </IconButton>
+          <IconButton size="small">
+            <ImageIcon />
+          </IconButton>
           <IconButton size="small" onClick={() => handleActionClick("unarchive")}>
             <UnarchiveIcon />
           </IconButton>
@@ -129,7 +141,7 @@ const NoteActions = ({ handleNoteList, note, container, onColorChange }) => {
             <MoreVertIcon />
           </IconButton>
           <Menu anchorEl={anchorEl} open={open} onClose={handleMenuClose}>
-            <MenuItem onClick={() => handleActionClick("delete")}>Delete Note</MenuItem> {/* Move to trash */}
+            <MenuItem onClick={() => handleActionClick("delete")}>Delete Note</MenuItem>
             <MenuItem onClick={() => handleActionClick("add-label")}>Add Label</MenuItem>
             <MenuItem onClick={() => handleActionClick("add-drawing")}>Add Drawing</MenuItem>
             <MenuItem onClick={() => handleActionClick("make-copy")}>Make a Copy</MenuItem>
@@ -142,6 +154,23 @@ const NoteActions = ({ handleNoteList, note, container, onColorChange }) => {
             <MenuItem onClick={() => handleActionClick("version-history")}>
               Version History
             </MenuItem>
+          </Menu>
+          <Menu
+            anchorEl={colorAnchorEl}
+            open={colorOpen}
+            onClose={handleColorMenuClose}
+            PaperProps={{
+              style: { display: "flex", flexWrap: "wrap", padding: "8px", maxWidth: "200px" },
+            }}
+          >
+            {colors.map((color) => (
+              <IconButton
+                key={color}
+                size="small"
+                style={{ backgroundColor: color, width: "24px", height: "24px", margin: "4px" }}
+                onClick={() => handleColorSelect(color)}
+              />
+            ))}
           </Menu>
         </>
       )}
