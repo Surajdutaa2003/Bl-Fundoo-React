@@ -46,12 +46,14 @@
 
 /* Input Fields */
 .login-form input {
+    position: relative;
     width: 100%;
     padding: 13px;
     margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 14px;
+    right: 14px;
 }
 
 /* Forgot Password & Create Account */

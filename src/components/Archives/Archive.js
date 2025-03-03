@@ -34,7 +34,7 @@ function Archive() {
 
   return (
     <div className="notes-section">
-      <h2>Archived Notes</h2>
+     
       <div className="notes-grid">
         {archivedNotes.length > 0 ? (
           archivedNotes.map((note) => (
