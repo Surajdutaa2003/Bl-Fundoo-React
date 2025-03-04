@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import NoteCard from "../NotesContainer/NoteCard";
-import "../DashboardContainer/Dashboard.css";
+// import "../DashboardContainer/Dashboard.css";
 import { getTrashNotes } from "../../services/api";
 import { useOutletContext } from "react-router-dom";
+import "../TrashNotes/TrashNotes.scss";
 
 function TrashNotes() {
   const [trashedNotes, setTrashedNotes] = useState([]);

@@ -1,0 +1,105 @@
+// Variables for reusability (defined locally)
+$white: #ffffff;
+$gray: #757575;
+$dark-gray: #5f6368;
+$black: #000000;
+$shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+$hover-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
+
+// Notes Section (specific to TrashNotes, but shared with Notes)
+.notes-section {
+  flex: 1;
+  padding: 20px;
+  background: $white;
+
+  /* Notes Grid */
+  .notes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+  }
+
+  /* Note Card (for Trashed Notes) */
+  .note-card {
+    position: relative;
+    background: $white;
+    padding: 12px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 300px;
+    box-shadow: $hover-shadow;
+    transition: transform 0.2s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+    &:hover {
+      transform: scale(1.03);
+    }
+
+    .selected-check,
+    .pin-icon,
+    .note-actions {
+      opacity: 0;
+      transition: opacity 0.2s ease-in-out;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+
+    .selected-check {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background-color: $black;
+      color: $white;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .pin-icon {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      cursor: pointer;
+      color: $dark-gray;
+      transition: color 0.2s ease-in-out;
+
+      &:hover {
+        color: $black;
+      }
+    }
+
+    /* Note Actions (specific to TrashNotes: Restore, Delete Forever) */
+    .note-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 10px;
+      transition: opacity 0.2s ease-in-out;
+
+      .MuiSvgIcon-root,
+      button { // Assuming buttons or icons for actions
+        font-size: 20px;
+        color: $dark-gray;
+        cursor: pointer;
+        transition: color 0.2s ease-in-out;
+        border: none;
+        background: transparent;
+        padding: 0;
+
+        &:hover {
+          color: $black;
+        }
+      }
+    }
+  }
+}

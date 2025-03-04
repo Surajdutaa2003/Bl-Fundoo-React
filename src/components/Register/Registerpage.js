@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import "./RegisterPage.css";
+// import "./RegisterPage.css";
 import logo from "../../assets/image/logo.jpeg";
 import { registerUser } from "../../services/api";
+import "../Register/RegisterPage.scss";
 
 
 export default function RegisterPage() {

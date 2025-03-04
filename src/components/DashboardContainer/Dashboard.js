@@ -3,9 +3,10 @@ import { Outlet, useNavigate } from "react-router-dom";
 import Sidebar from "../DashboardContainer/Sidebar";
 // import { IconButton } from "@mui/material";
 // import AttachFileIcon from "@mui/icons-material/AttachFile"; // For paperclip icon
-import "../DashboardContainer/Dashboard.css";
+// import "../DashboardContainer/Dashboard.css";
 // Import logo if in src/assets
 import keepLogo from "../../assets/image/KeepLogo.png";
+import "../DashboardContainer/DashboardContainer.scss";
 
 function Dashboard() {
   const navigate = useNavigate();

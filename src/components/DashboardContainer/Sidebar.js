@@ -1,11 +1,12 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import "./Dashboard.css";
+// import "./Dashboard.css";
 import Keep1 from "../../assets/image/Keep1.png";
 import Keep2 from "../../assets/image/Keep2.png";
 import Keep3 from "../../assets/image/Keep3.png";
 import Keep4 from "../../assets/image/Keep4.png";
 import Keep5 from "../../assets/image/Keep5.png";
+import "../DashboardContainer/DashboardContainer.scss";
 
 function Sidebar({ isCollapsed }) {
   return (

@@ -10,6 +10,7 @@ import UnarchiveIcon from "@mui/icons-material/Unarchive";
 import RestoreFromTrashIcon from "@mui/icons-material/RestoreFromTrash";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { archiveNote, deleteForeverNote, restoreNote, deletePermanently, changeNoteColor } from "../../services/api";
+import "../NotesAction/NotesAction.scss";
 
 const NoteActions = ({ handleNoteList, note, container, onColorChange }) => {
   const [anchorEl, setAnchorEl] = useState(null);

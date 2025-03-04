@@ -1,0 +1,232 @@
+// Variables (shared from DashboardContainer or defined here)
+$white: #ffffff;
+$gray: #757575;
+$dark-gray: #5f6368;
+$black: #000000;
+$border-gray: #ccc;
+$shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+$hover-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
+
+// Notes Section
+.notes-section {
+  flex: 1;
+  padding: 20px;
+  background: $white;
+}
+
+/* Note Input (for AddNote or Edit, shared with Dashboard but specific to Notes) */
+.note-input {
+  background: $white;
+  padding: 10px;
+  border-radius: 16px;
+  box-shadow: $shadow;
+  max-width: 600px;
+  margin: 0 auto 20px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+
+  &.collapsed-note-input {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 8px;
+
+    .note-input-field {
+      flex: 1;
+      padding: 8px;
+      font-size: 16px;
+      border: none;
+      outline: none;
+      background: transparent;
+      color: $gray;
+    }
+
+    .note-input-icons {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: auto;
+
+      .MuiSvgIcon-root {
+        font-size: 20px;
+        color: $dark-gray;
+        cursor: pointer;
+        transition: color 0.2s ease-in-out;
+
+        &:hover {
+          color: $black;
+        }
+      }
+    }
+  }
+
+  &.expanded-note-input {
+    padding: 15px;
+
+    .note-input-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+
+      .note-input-title {
+        width: 100%;
+        padding: 8px;
+        font-size: 18px;
+        font-weight: bold;
+        border: none;
+        border-bottom: 1px solid $border-gray;
+        outline: none;
+        background: transparent;
+      }
+
+      .pin-icon {
+        color: $dark-gray;
+        transition: color 0.2s ease-in-out;
+
+        &:hover {
+          color: $black;
+        }
+      }
+    }
+
+    .note-input-description {
+      width: 100%;
+      min-height: 100px;
+      padding: 10px;
+      font-size: 16px;
+      border: none;
+      outline: none;
+      resize: none;
+      background: transparent;
+      margin-bottom: 10px;
+    }
+
+    .note-input-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 10px;
+
+      .pin-icon {
+        color: $dark-gray;
+        transition: color 0.2s ease-in-out;
+
+        &:hover {
+          color: $black;
+        }
+      }
+
+      .close-button {
+        margin-left: auto;
+        padding: 5px 15px;
+        font-size: 14px;
+        border: none;
+        background: transparent;
+        color: $dark-gray;
+        cursor: pointer;
+        border-radius: 4px;
+        transition: color 0.2s ease-in-out;
+
+        &:hover {
+          color: $black;
+        }
+      }
+
+      .edited-date {
+        position: absolute;
+        right: 15px;
+        bottom: 15px;
+        font-size: 12px;
+        color: $gray;
+      }
+    }
+  }
+}
+
+/* Notes Grid */
+.notes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+  margin-top: 20px;
+}
+
+/* Note Card */
+.note-card {
+  position: relative;
+  background: $white;
+  padding: 12px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 300px;
+  box-shadow: $hover-shadow;
+  transition: transform 0.2s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+  &:hover {
+    transform: scale(1.03);
+  }
+
+  .selected-check,
+  .pin-icon,
+  .note-actions {
+    opacity: 0;
+    transition: opacity 0.2s ease-in-out;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
+  .selected-check {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    background-color: $black;
+    color: $white;
+    border-radius: 50%;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    cursor: pointer;
+  }
+
+  .pin-icon {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    cursor: pointer;
+    color: $dark-gray;
+    transition: color 0.2s ease-in-out;
+
+    &:hover {
+      color: $black;
+    }
+  }
+
+  .note-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 10px;
+    transition: opacity 0.2s ease-in-out;
+
+    .MuiSvgIcon-root {
+      font-size: 20px;
+      color: $dark-gray;
+      cursor: pointer;
+      transition: color 0.2s ease-in-out;
+
+      &:hover {
+        color: $black;
+      }
+    }
+  }
+}

@@ -1,0 +1,23 @@
+// Variables (shared from DashboardContainer or NotesContainer)
+$dark-gray: #5f6368;
+$black: #000000;
+
+// Note Actions
+.note-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 10px;
+  transition: opacity 0.2s ease-in-out;
+
+  .MuiSvgIcon-root {
+    font-size: 20px;
+    color: $dark-gray;
+    cursor: pointer;
+    transition: color 0.2s ease-in-out;
+
+    &:hover {
+      color: $black;
+    }
+  }
+}

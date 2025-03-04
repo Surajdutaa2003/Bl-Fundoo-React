@@ -1,4 +1,5 @@
-/* Main container */
+
+Main container
 .register-container {
     display: flex;
     flex-direction: column; /* Header ke liye space */
@@ -204,3 +205,4 @@
         font-size: 12px;
     }
 }
+

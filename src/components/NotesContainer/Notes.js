@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import NoteCard from "./NoteCard";
 import AddNote from "../../components/AddNote/AddNote";
-import "../DashboardContainer/Dashboard.css";
+// import "../DashboardContainer/Dashboard.css";
 import { getUserNotes } from "../../services/api";
 import { useOutletContext } from "react-router-dom";
+import "../NotesContainer/NotesContainer.scss";
 
 function Notes() {
   const [notesList, setNotesList] = useState([]);

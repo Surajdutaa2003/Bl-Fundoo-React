@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react"; // Ensure useState and useEffect are imported
-import "../DashboardContainer/Dashboard.css";
+// import "../DashboardContainer/Dashboard.css";
 import NoteActions from "../NotesAction/NotesAction";
+import "../NotesContainer/NotesContainer.scss";
 
 function NoteCard({ note, handleNoteList, container }) {
   const [backgroundColor, setBackgroundColor] = useState(note?.color || "#FFFFFF");
