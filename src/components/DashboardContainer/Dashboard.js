@@ -82,7 +82,7 @@ function Dashboard() {
             </button>
             <div className="dropdown-more">
               <button className="dropdown-link" onClick={() => {/* Add hide accounts logic if needed */}}>
-                Hide more accounts <span>▲</span>
+              
               </button>
               <div className="additional-account">
                 <div className="additional-details">

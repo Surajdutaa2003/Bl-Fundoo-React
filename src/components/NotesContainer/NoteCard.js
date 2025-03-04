@@ -54,3 +54,4 @@ function NoteCard({ note, handleNoteList, container }) {
 }
 
 export default NoteCard;
+// mm
