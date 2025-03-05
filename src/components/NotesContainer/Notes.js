@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import NoteCard from "./NoteCard";
 import AddNote from "../../components/AddNote/AddNote";
 // import "../DashboardContainer/Dashboard.css";
@@ -8,7 +8,8 @@ import "../NotesContainer/NotesContainer.scss";
 
 function Notes() {
   const [notesList, setNotesList] = useState([]);
-  const { searchQuery } = useOutletContext(); // This should now work
+  const { searchQuery = "" } = useOutletContext() || {}; // Default to empty string if undefined
+  console.log("Notes rendering with searchQuery:", searchQuery);
 
   useEffect(() => {
     fetchNotes();
@@ -28,12 +29,14 @@ function Notes() {
     }
   };
 
-  const filteredNotes = notesList.filter(note => 
-    note.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    note.description?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredNotes = useMemo(() => {
+    return notesList.filter(note => 
+      note.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      note.description?.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [notesList, searchQuery]); // Memoize filtered notes to prevent unnecessary re-renders
 
-  const updateNotesList = (updatedNote, action) => {
+  const updateNotesList = useCallback((updatedNote, action) => {
     if (action === "add") {
       setNotesList(prevNotes => [updatedNote, ...prevNotes]);
     } else if (action === "archive" || action === "delete" || action === "trash") {
@@ -43,7 +46,7 @@ function Notes() {
         note.id === updatedNote.id ? updatedNote : note
       ));
     }
-  };
+  }, []); // Memoize to prevent unnecessary re-renders in NoteCard
 
   return (
     <div className="notes-section">
@@ -67,4 +70,3 @@ function Notes() {
 }
 
 export default Notes;
-// mm
