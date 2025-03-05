@@ -214,4 +214,26 @@ export const changeNoteColor = async (noteId, color) => {
     throw error.response?.data?.message || "Failed to change note color";
   }
 };
+// Update a note
+export const updateNote = async (noteId, updatedData) => {
+  try {
+    const token = getAuthToken();
+    if (!token) throw new Error("Missing authentication token!");
+
+    const payload = {
+      noteId: noteId,
+      ...updatedData
+    };
+
+    const response = await axios.post(`${NOTES_URL}/updateNotes`, payload, {
+      headers: { Authorization: token },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("❌ Failed to update note:", error.response?.data?.message || error.message);
+    throw error.response?.data?.message || "Failed to update note";
+  }
+};
+
 // mm
