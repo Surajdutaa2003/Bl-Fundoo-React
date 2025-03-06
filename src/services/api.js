@@ -271,4 +271,26 @@ export const getReminderNotes = async () => {
   }
 };
 
+
+// Remove reminder from a note
+export const removeReminderNotes = async (noteId) => {
+  try {
+    const token = getAuthToken();
+    if (!token) throw new Error("Missing authentication token!");
+
+    const payload = {
+      noteIdList: [noteId],
+    };
+
+    const response = await axios.post(`${NOTES_URL}/removeReminderNotes`, payload, {
+      headers: { Authorization: token },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("❌ Failed to remove reminder:", error.response?.data?.message || error.message);
+    throw error.response?.data?.message || "Failed to remove reminder";
+  }
+};
+
 // mm

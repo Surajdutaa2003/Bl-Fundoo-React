@@ -12,7 +12,8 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import AccessTimeIcon from "@mui/icons-material/AccessTime"; // Clock icon for reminder
-import { updateNote } from "../../services/api";
+import CloseIcon from "@mui/icons-material/Close"; // Import CloseIcon for the cross button
+import { updateNote, removeReminderNotes } from "../../services/api";
 
 // Helper function to check if a date is valid
 const isValidDate = (date) => {
@@ -92,6 +93,18 @@ function NoteCard({ note, handleNoteList, container, onEdit }) {
     }
   };
 
+  const handleRemoveReminder = async () => {
+    try {
+      await removeReminderNotes(note.id);
+      console.log(`Reminder removed for note ${note.id}`);
+      // Update the note to remove the reminder
+      handleNoteList({ ...note, reminder: null }, "update");
+    } catch (error) {
+      console.error("Failed to remove reminder:", error);
+      alert("Failed to remove reminder. Please try again.");
+    }
+  };
+
   // Only render reminder badge if reminder is a valid date
   const renderReminder = () => {
     if (note.reminder && isValidDate(new Date(note.reminder))) {
@@ -99,8 +112,16 @@ function NoteCard({ note, handleNoteList, container, onEdit }) {
         <div className="reminder-badge">
           <AccessTimeIcon fontSize="small" />
           <span>
-            {new Date(note.reminder).toLocaleDateString("en-US", { month: "short", day: "numeric" })} {new Date(note.reminder).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true })}
+            {new Date(note.reminder).toLocaleDateString("en-US", { month: "short", day: "numeric" })}{" "}
+            {new Date(note.reminder).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true })}
           </span>
+          <IconButton
+            size="small"
+            className="reminder-remove-button"
+            onClick={handleRemoveReminder}
+          >
+            <CloseIcon fontSize="small" />
+          </IconButton>
         </div>
       );
     }
@@ -154,7 +175,7 @@ function NoteCard({ note, handleNoteList, container, onEdit }) {
               position: "absolute",
               background: "#ffffff",
               boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
-              // border-radius: "8px",
+              borderRadius: "8px",
               padding: "16px",
             }}
           >
@@ -219,4 +240,3 @@ function NoteCard({ note, handleNoteList, container, onEdit }) {
 }
 
 export default NoteCard;
-// 

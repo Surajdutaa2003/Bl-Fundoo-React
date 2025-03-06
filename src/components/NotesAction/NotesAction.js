@@ -12,14 +12,15 @@ import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { DesktopDateTimePicker } from '@mui/x-date-pickers/DesktopDateTimePicker';
-import { isValid, isAfter } from 'date-fns'; // Import isAfter for future date check
+import { isValid, isAfter } from 'date-fns';
 import { 
   archiveNote, 
   deleteForeverNote, 
   restoreNote, 
   deletePermanently, 
   changeNoteColor,
-  addUpdateReminderNotes 
+  addUpdateReminderNotes,
+  removeReminderNotes // Add the new import
 } from "../../services/api";
 import "../NotesAction/NotesAction.scss";
 
@@ -28,8 +29,8 @@ const NoteActions = ({ handleNoteList, note, container, onColorChange }) => {
   const [colorAnchorEl, setColorAnchorEl] = useState(null);
   const [reminderAnchorEl, setReminderAnchorEl] = useState(null);
   const [openDateTimePicker, setOpenDateTimePicker] = useState(false);
-  const [selectedDateTime, setSelectedDateTime] = useState(new Date()); // Default to current date/time
-  const [dateError, setDateError] = useState(""); // State for error message
+  const [selectedDateTime, setSelectedDateTime] = useState(new Date());
+  const [dateError, setDateError] = useState("");
   const open = Boolean(anchorEl);
   const colorOpen = Boolean(colorAnchorEl);
   const reminderOpen = Boolean(reminderAnchorEl);
@@ -80,7 +81,7 @@ const NoteActions = ({ handleNoteList, note, container, onColorChange }) => {
   const handleReminderSelect = (reminder) => {
     if (reminder === "Pick date & time") {
       setOpenDateTimePicker(true);
-      setDateError(""); // Clear error when opening
+      setDateError("");
     } else {
       console.log(`Selected reminder: ${reminder}`);
     }
@@ -88,23 +89,19 @@ const NoteActions = ({ handleNoteList, note, container, onColorChange }) => {
   };
 
   const handleDateTimeSelect = async (newDateTime) => {
-    // Debug log to inspect the newDateTime
     console.log("Selected DateTime:", newDateTime);
 
-    // Validate the date
     if (!newDateTime || !isValid(newDateTime)) {
       setDateError("Invalid date selected.");
-      return; // Do not proceed with API call
+      return;
     }
 
-    // Check if the date is in the future
     const now = new Date();
     if (!isAfter(newDateTime, now)) {
       setDateError("Please select a future date and time.");
-      return; // Do not proceed with API call
+      return;
     }
 
-    // If date is valid and in the future, proceed with API call
     setSelectedDateTime(newDateTime);
     if (note?.id) {
       try {
@@ -113,11 +110,11 @@ const NoteActions = ({ handleNoteList, note, container, onColorChange }) => {
         if (handleNoteList) {
           handleNoteList({ ...note, reminder: newDateTime.toISOString() }, "update");
         }
-        setOpenDateTimePicker(false); // Close dialog on success
-        setDateError(""); // Clear error on success
+        setOpenDateTimePicker(false);
+        setDateError("");
       } catch (error) {
         console.error('Failed to update reminder:', error);
-        setDateError("Failed to save reminder. Please try again."); // Set error if API fails
+        setDateError("Failed to save reminder. Please try again.");
       }
     }
   };
@@ -130,8 +127,8 @@ const NoteActions = ({ handleNoteList, note, container, onColorChange }) => {
 
   const handleCancel = () => {
     setOpenDateTimePicker(false);
-    setSelectedDateTime(new Date()); // Reset to current date/time
-    setDateError(""); // Clear error on cancel
+    setSelectedDateTime(new Date());
+    setDateError("");
   };
 
   const colors = [
@@ -399,8 +396,8 @@ const NoteActions = ({ handleNoteList, note, container, onColorChange }) => {
               value={selectedDateTime}
               onChange={(newValue) => {
                 setSelectedDateTime(newValue);
-                setDateError(""); // Clear error when date changes
-                console.log("onChange DateTime:", newValue); // Debug log
+                setDateError("");
+                console.log("onChange DateTime:", newValue);
               }}
               onAccept={handleDateTimeSelect}
               format="MM/dd/yyyy hh:mm a"
