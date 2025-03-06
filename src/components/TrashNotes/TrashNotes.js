@@ -1,13 +1,13 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import NoteCard from "../NotesContainer/NoteCard";
-// import "../DashboardContainer/Dashboard.css";
 import { getTrashNotes } from "../../services/api";
 import { useOutletContext } from "react-router-dom";
 import "../TrashNotes/TrashNotes.scss";
 
 function TrashNotes() {
   const [trashedNotes, setTrashedNotes] = useState([]);
-  const { searchQuery } = useOutletContext();
+  const context = useOutletContext(); // Get the context safely
+  const searchQuery = context?.searchQuery || ""; // Default to empty string if undefined
 
   useEffect(() => {
     fetchTrashedNotes();
@@ -33,7 +33,7 @@ function TrashNotes() {
         note.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         note.description?.toLowerCase().includes(searchQuery.toLowerCase())
     );
-  }, [trashedNotes, searchQuery]); // Dependencies: trashedNotes and searchQuery**
+  }, [trashedNotes, searchQuery]);
 
   const updateNotesList = useCallback((updatedNote, action) => {
     if (action === "delete" || action === "restore" || action === "deleteForever") {
@@ -43,7 +43,7 @@ function TrashNotes() {
         note.id === updatedNote.id ? updatedNote : note
       ));
     }
-  }, []); // No dependencies since it only updates state**
+  }, []);
 
   return (
     <div className="notes-section">

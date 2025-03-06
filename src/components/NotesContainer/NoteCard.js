@@ -1,32 +1,49 @@
-import React, { useState, useEffect } from "react"; // Ensure useState and useEffect are imported
-// import "../DashboardContainer/Dashboard.css";
+import React, { useState, useEffect, useRef } from "react";
 import NoteActions from "../NotesAction/NotesAction";
 import "../NotesContainer/NotesContainer.scss";
-import { IconButton } from "@mui/material"; // Added for action icons
-import PushPinOutlinedIcon from "@mui/icons-material/PushPinOutlined"; // Added for pin icon
-import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone"; // Added for bell icon
-import PersonAddIcon from "@mui/icons-material/PersonAdd"; // Added for person add icon
-import PaletteIcon from "@mui/icons-material/Palette"; // Added for palette icon
-import ImageIcon from "@mui/icons-material/Image"; // Added for image icon
-import ArchiveIcon from "@mui/icons-material/Archive"; // Added for archive icon
-import MoreVertIcon from "@mui/icons-material/MoreVert"; // Added for more options icon
-import ArrowBackIcon from "@mui/icons-material/ArrowBack"; // Added for navigation
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward"; // Added for navigation
-import { updateNote } from "../../services/api"; // Added import for updateNote API**
+import { IconButton } from "@mui/material";
+import PushPinOutlinedIcon from "@mui/icons-material/PushPinOutlined";
+import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import PaletteIcon from "@mui/icons-material/Palette";
+import ImageIcon from "@mui/icons-material/Image";
+import ArchiveIcon from "@mui/icons-material/Archive";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import { updateNote } from "../../services/api";
 
 function NoteCard({ note, handleNoteList, container, onEdit }) {
   const [backgroundColor, setBackgroundColor] = useState(
     note?.color || "#FFFFFF"
   );
-  const [isHovered, setIsHovered] = useState(false); // State for hover
-  const [isExpanded, setIsExpanded] = useState(false); // State for expanded box
-  const [editedNote, setEditedNote] = useState({ ...note }); // **New state to track edited title and description**
+  const [isHovered, setIsHovered] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [editedNote, setEditedNote] = useState({ ...note });
+  const expandedRef = useRef(null);
 
   useEffect(() => {
-    // Sync backgroundColor with the note prop whenever it changes
     setBackgroundColor(note?.color || "#FFFFFF");
-    setEditedNote({ ...note }); // **Sync editedNote with note prop on mount or update**
+    setEditedNote({ ...note });
   }, [note]);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (expandedRef.current && !expandedRef.current.contains(event.target)) {
+        setIsExpanded(false);
+      }
+    }
+
+    if (isExpanded) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isExpanded]);
 
   if (!note) {
     return null;
@@ -38,20 +55,15 @@ function NoteCard({ note, handleNoteList, container, onEdit }) {
     }
   };
 
-  const handleCardClick = (e) => {
+  const handleTitleOrDescriptionClick = () => {
     if (onEdit) {
-      onEdit(note); // Trigger edit in parent (e.g., Notes.js) if provided
+      onEdit(note);
     }
-    setIsExpanded(true); // Show expanded box on click
-  };
-
-  const handleCloseExpanded = () => {
-    setIsExpanded(false); // Close expanded box
-    setEditedNote({ ...note }); // **Reset editedNote to original note on close**
+    setIsExpanded(true);
   };
 
   const handleInputChange = (field, value) => {
-    setEditedNote((prev) => ({ ...prev, [field]: value })); // **Update editedNote state for title or description**
+    setEditedNote((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSaveNote = async () => {
@@ -60,8 +72,7 @@ function NoteCard({ note, handleNoteList, container, onEdit }) {
         title: editedNote.title,
         description: editedNote.description,
       };
-      const updatedNoteData = await updateNote(note.id, updatedData); // **Call updateNote API**
-      // console.log("response",updatedNoteData)
+      const updatedNoteData = await updateNote(note.id, updatedData);
       handleNoteList(
         {
           ...note,
@@ -69,11 +80,11 @@ function NoteCard({ note, handleNoteList, container, onEdit }) {
           description: updatedData.description,
         },
         "update"
-      ); // **Update UI via handleNoteList**
-      setIsExpanded(false); // Close after saving
+      );
+      setIsExpanded(false);
     } catch (error) {
       console.error("❌ Failed to update note:", error.message);
-      alert("Failed to update note. Please try again."); // Optional user feedback
+      alert("Failed to update note. Please try again.");
     }
   };
 
@@ -84,11 +95,10 @@ function NoteCard({ note, handleNoteList, container, onEdit }) {
         style={{ backgroundColor, position: "relative" }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        onClick={handleCardClick} // Add click handler to open expanded box
       >
         <div className="note-content">
-          <h3>{note.title || "Untitled"}</h3>
-          <p>{note.description || "No description available"}</p>
+          <h3 onClick={handleTitleOrDescriptionClick}>{note.title || "Untitled"}</h3>
+          <p onClick={handleTitleOrDescriptionClick}>{note.description || "No description available"}</p>
         </div>
         <div
           className={`note-actions-container ${
@@ -115,30 +125,26 @@ function NoteCard({ note, handleNoteList, container, onEdit }) {
         </div>
       </div>
       {isExpanded && (
-        <div
-          className="expanded-note-overlay"
-          style={{ position: "absolute", zIndex: 1000 }} // Position absolutely, above the card
-          onClick={handleCloseExpanded}
-        >
+        <div className="expanded-note-overlay">
           <div
+            ref={expandedRef}
             className="expanded-note"
             style={{
-              top: "24.103px", // Fixed position as previously requested
-              left: "83.44px", // Fixed position as previously requested
-              width: "500.109px", // Fixed width as previously requested
-              position: "absolute", // Fixed positioning
+              top: "24.103px",
+              left: "83.44px",
+              width: "500.109px",
+              position: "absolute",
               background: "#ffffff",
               boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
               borderRadius: "8px",
               padding: "16px",
             }}
-            onClick={(e) => e.stopPropagation()}
           >
             <div className="note-input-header">
               <input
                 type="text"
                 placeholder="Title"
-                value={editedNote.title || ""} // **Use editedNote for real-time updates**
+                value={editedNote.title || ""}
                 onChange={(e) => handleInputChange("title", e.target.value)}
                 className="note-input-title"
               />
@@ -148,7 +154,7 @@ function NoteCard({ note, handleNoteList, container, onEdit }) {
             </div>
             <textarea
               placeholder="Note"
-              value={editedNote.description || ""} // **Use editedNote for real-time updates**
+              value={editedNote.description || ""}
               onChange={(e) => handleInputChange("description", e.target.value)}
               className="note-input-description"
             />
@@ -165,10 +171,7 @@ function NoteCard({ note, handleNoteList, container, onEdit }) {
               <IconButton size="small">
                 <ImageIcon />
               </IconButton>
-              <IconButton
-                size="small"
-                onClick={() => handleNoteList(note, "archive")}
-              >
+              <IconButton size="small" onClick={() => handleNoteList(note, "archive")}>
                 <ArchiveIcon />
               </IconButton>
               <IconButton size="small">

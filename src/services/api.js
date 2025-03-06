@@ -235,5 +235,23 @@ export const updateNote = async (noteId, updatedData) => {
     throw error.response?.data?.message || "Failed to update note";
   }
 };
+// Reminder
+export const addUpdateReminderNotes = async (noteId, reminder) => {
+  try {
+    const token = getAuthToken();
+    if (!token) throw new Error("Missing authentication token!");
 
+    const response = await axios.post(`${NOTES_URL}/addUpdateReminderNotes`, {
+      reminder: reminder.toISOString(), // Convert Date object to ISO 8601 string
+      noteIdList: [noteId],
+    }, {
+      headers: { Authorization: token },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("❌ Failed to update reminder:", error.response?.data?.message || error.message);
+    throw error.response?.data?.message || "Failed to update reminder";
+  }
+};
 // mm

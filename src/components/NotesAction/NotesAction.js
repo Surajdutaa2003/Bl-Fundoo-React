@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { IconButton, Menu, MenuItem } from "@mui/material";
+import { IconButton, Menu, MenuItem, Dialog, DialogTitle, DialogContent, TextField } from "@mui/material";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import PaletteIcon from "@mui/icons-material/Palette";
@@ -9,23 +9,35 @@ import ArchiveIcon from "@mui/icons-material/Archive";
 import UnarchiveIcon from "@mui/icons-material/Unarchive";
 import RestoreFromTrashIcon from "@mui/icons-material/RestoreFromTrash";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import { archiveNote, deleteForeverNote, restoreNote, deletePermanently, changeNoteColor } from "../../services/api";
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { DesktopDateTimePicker } from '@mui/x-date-pickers/DesktopDateTimePicker';
+import { 
+  archiveNote, 
+  deleteForeverNote, 
+  restoreNote, 
+  deletePermanently, 
+  changeNoteColor,
+  addUpdateReminderNotes 
+} from "../../services/api";
 import "../NotesAction/NotesAction.scss";
 
 const NoteActions = ({ handleNoteList, note, container, onColorChange }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const [colorAnchorEl, setColorAnchorEl] = useState(null);
-  const [reminderAnchorEl, setReminderAnchorEl] = useState(null); // **New state for reminder dropdown**
+  const [reminderAnchorEl, setReminderAnchorEl] = useState(null);
+  const [openDateTimePicker, setOpenDateTimePicker] = useState(false);
+  const [selectedDateTime, setSelectedDateTime] = useState(null);
   const open = Boolean(anchorEl);
   const colorOpen = Boolean(colorAnchorEl);
-  const reminderOpen = Boolean(reminderAnchorEl); // **New state for reminder dropdown open status**
+  const reminderOpen = Boolean(reminderAnchorEl);
 
   const handleMenuOpen = (event) => setAnchorEl(event.currentTarget);
   const handleMenuClose = () => setAnchorEl(null);
   const handleColorMenuOpen = (event) => setColorAnchorEl(event.currentTarget);
   const handleColorMenuClose = () => setColorAnchorEl(null);
-  const handleReminderMenuOpen = (event) => setReminderAnchorEl(event.currentTarget); // **New handler for reminder dropdown**
-  const handleReminderMenuClose = () => setReminderAnchorEl(null); // **New handler for closing reminder dropdown**
+  const handleReminderMenuOpen = (event) => setReminderAnchorEl(event.currentTarget);
+  const handleReminderMenuClose = () => setReminderAnchorEl(null);
 
   const handleActionClick = async (action) => {
     try {
@@ -36,12 +48,12 @@ const NoteActions = ({ handleNoteList, note, container, onColorChange }) => {
         await archiveNote(note?.id, false);
         handleNoteList(note, "unarchive");
       } else if (action === "delete") {
-        await deleteForeverNote(note?.id); // Move to trash from notes or archive
+        await deleteForeverNote(note?.id);
         handleNoteList(note, "delete");
       } else if (action === "restore") {
         await restoreNote(note?.id);
         handleNoteList(note, "restore");
-      } else if (action === "permanentDelete") { // Permanent deletion from trash
+      } else if (action === "permanentDelete") {
         await deletePermanently(note?.id);
         handleNoteList(note, "delete");
       }
@@ -54,8 +66,8 @@ const NoteActions = ({ handleNoteList, note, container, onColorChange }) => {
   const handleColorSelect = async (color) => {
     try {
       if (onColorChange && note) {
-        await changeNoteColor(note.id, color); // Call API to update color
-        onColorChange(note.id, color); // Update local state
+        await changeNoteColor(note.id, color);
+        onColorChange(note.id, color);
       }
     } catch (err) {
       console.error("Error changing note color:", err);
@@ -64,10 +76,29 @@ const NoteActions = ({ handleNoteList, note, container, onColorChange }) => {
   };
 
   const handleReminderSelect = (reminder) => {
-    console.log(`Selected reminder: ${reminder}`); // **Log the selected reminder for now**
-    // **Here, you can add logic to save the reminder via an API call (e.g., updateNote with reminder data)**
-    // Example: await updateNote(note.id, { reminder });
+    if (reminder === "Pick date & time") {
+      setOpenDateTimePicker(true);
+    } else {
+      console.log(`Selected reminder: ${reminder}`);
+    }
     handleReminderMenuClose();
+  };
+
+  const handleDateTimeSelect = async (newDateTime) => {
+    setSelectedDateTime(newDateTime);
+    if (note?.id) {
+      try {
+        await addUpdateReminderNotes(note.id, newDateTime);
+        console.log(`Reminder set for note ${note.id} at ${newDateTime}`);
+        // Update the note list or UI if handleNoteList is provided
+        if (handleNoteList) {
+          handleNoteList({ ...note, reminder: newDateTime }, "update");
+        }
+      } catch (error) {
+        console.error('Failed to update reminder:', error);
+      }
+    }
+    setOpenDateTimePicker(false);
   };
 
   const colors = [
@@ -80,7 +111,7 @@ const NoteActions = ({ handleNoteList, note, container, onColorChange }) => {
     <div className="note-actions">
       {container === "notes" && (
         <>
-          <IconButton size="small" onClick={handleReminderMenuOpen}> {/* **Updated bell icon to open reminder menu** */}
+          <IconButton size="small" onClick={handleReminderMenuOpen}>
             <NotificationsNoneIcon />
           </IconButton>
           <IconButton size="small">
@@ -151,13 +182,13 @@ const NoteActions = ({ handleNoteList, note, container, onColorChange }) => {
               Saved in Google Reminders
             </div>
             <MenuItem onClick={() => handleReminderSelect("Later today, 8:00 PM")}>
-              Later today
+              Later today, 8:00 PM
             </MenuItem>
             <MenuItem onClick={() => handleReminderSelect("Tomorrow, 8:00 AM")}>
-              Tomorrow
+              Tomorrow, 8:00 AM
             </MenuItem>
             <MenuItem onClick={() => handleReminderSelect("Next week, Mon, 8:00 AM")}>
-              Next week
+              Next week, Mon, 8:00 AM
             </MenuItem>
             <MenuItem onClick={() => handleReminderSelect("Pick date & time")}>
               <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
@@ -174,7 +205,7 @@ const NoteActions = ({ handleNoteList, note, container, onColorChange }) => {
       )}
       {container === "archive" && (
         <>
-          <IconButton size="small" onClick={handleReminderMenuOpen}> {/* **Updated bell icon for archive** */}
+          <IconButton size="small" onClick={handleReminderMenuOpen}>
             <NotificationsNoneIcon />
           </IconButton>
           <IconButton size="small">
@@ -268,7 +299,7 @@ const NoteActions = ({ handleNoteList, note, container, onColorChange }) => {
       )}
       {container === "trash" && (
         <>
-          <IconButton size="small" onClick={handleReminderMenuOpen}> {/* **Updated bell icon for trash** */}
+          <IconButton size="small" onClick={handleReminderMenuOpen}>
             <NotificationsNoneIcon />
           </IconButton>
           <IconButton size="small" onClick={() => handleActionClick("restore")}>
@@ -288,8 +319,6 @@ const NoteActions = ({ handleNoteList, note, container, onColorChange }) => {
                 boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
                 borderRadius: "8px",
                 padding: "16px",
-                position:"absolute",
-                top: "80px",
               },
             }}
           >
@@ -321,6 +350,18 @@ const NoteActions = ({ handleNoteList, note, container, onColorChange }) => {
           </Menu>
         </>
       )}
+      <Dialog open={openDateTimePicker} onClose={() => setOpenDateTimePicker(false)}>
+        <DialogTitle>Pick Date & Time</DialogTitle>
+        <DialogContent>
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <DesktopDateTimePicker
+              value={selectedDateTime}
+              onChange={handleDateTimeSelect}
+              renderInput={(params) => <TextField {...params} />}
+            />
+          </LocalizationProvider>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
