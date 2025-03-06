@@ -84,7 +84,7 @@ function Notes() {
           <p>No notes match your search</p>
         )}
       </div>
-      {editingNote && (
+      {/* {editingNote && (
         <div className="expanded-note-overlay" onClick={() => setEditingNote(null)}>
           <div className="expanded-note" onClick={(e) => e.stopPropagation()}>
             <div className="note-input-header">
@@ -139,7 +139,7 @@ function Notes() {
             </div>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 }

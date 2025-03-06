@@ -254,4 +254,21 @@ export const addUpdateReminderNotes = async (noteId, reminder) => {
     throw error.response?.data?.message || "Failed to update reminder";
   }
 };
+// get reminder list
+export const getReminderNotes = async () => {
+  try {
+    const token = getAuthToken();
+    if (!token) return { data: [] };
+
+    const response = await axios.get(`${NOTES_URL}/getReminderNotesList`, {
+      headers: { Authorization: token },
+    });
+
+    return response.data || { data: [] };
+  } catch (error) {
+    console.error("❌ Failed to fetch reminder notes:", error.response?.data?.message || error.message);
+    return { data: [] }; // Prevents app crash
+  }
+};
+
 // mm

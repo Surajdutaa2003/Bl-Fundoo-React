@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { IconButton, Menu, MenuItem, Dialog, DialogTitle, DialogContent, TextField } from "@mui/material";
+import { IconButton, Menu, MenuItem, Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button } from "@mui/material";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import PaletteIcon from "@mui/icons-material/Palette";
@@ -12,6 +12,7 @@ import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { DesktopDateTimePicker } from '@mui/x-date-pickers/DesktopDateTimePicker';
+import { isValid, isAfter } from 'date-fns'; // Import isAfter for future date check
 import { 
   archiveNote, 
   deleteForeverNote, 
@@ -27,7 +28,8 @@ const NoteActions = ({ handleNoteList, note, container, onColorChange }) => {
   const [colorAnchorEl, setColorAnchorEl] = useState(null);
   const [reminderAnchorEl, setReminderAnchorEl] = useState(null);
   const [openDateTimePicker, setOpenDateTimePicker] = useState(false);
-  const [selectedDateTime, setSelectedDateTime] = useState(null);
+  const [selectedDateTime, setSelectedDateTime] = useState(new Date()); // Default to current date/time
+  const [dateError, setDateError] = useState(""); // State for error message
   const open = Boolean(anchorEl);
   const colorOpen = Boolean(colorAnchorEl);
   const reminderOpen = Boolean(reminderAnchorEl);
@@ -78,6 +80,7 @@ const NoteActions = ({ handleNoteList, note, container, onColorChange }) => {
   const handleReminderSelect = (reminder) => {
     if (reminder === "Pick date & time") {
       setOpenDateTimePicker(true);
+      setDateError(""); // Clear error when opening
     } else {
       console.log(`Selected reminder: ${reminder}`);
     }
@@ -85,20 +88,50 @@ const NoteActions = ({ handleNoteList, note, container, onColorChange }) => {
   };
 
   const handleDateTimeSelect = async (newDateTime) => {
+    // Debug log to inspect the newDateTime
+    console.log("Selected DateTime:", newDateTime);
+
+    // Validate the date
+    if (!newDateTime || !isValid(newDateTime)) {
+      setDateError("Invalid date selected.");
+      return; // Do not proceed with API call
+    }
+
+    // Check if the date is in the future
+    const now = new Date();
+    if (!isAfter(newDateTime, now)) {
+      setDateError("Please select a future date and time.");
+      return; // Do not proceed with API call
+    }
+
+    // If date is valid and in the future, proceed with API call
     setSelectedDateTime(newDateTime);
     if (note?.id) {
       try {
         await addUpdateReminderNotes(note.id, newDateTime);
         console.log(`Reminder set for note ${note.id} at ${newDateTime}`);
-        // Update the note list or UI if handleNoteList is provided
         if (handleNoteList) {
-          handleNoteList({ ...note, reminder: newDateTime }, "update");
+          handleNoteList({ ...note, reminder: newDateTime.toISOString() }, "update");
         }
+        setOpenDateTimePicker(false); // Close dialog on success
+        setDateError(""); // Clear error on success
       } catch (error) {
         console.error('Failed to update reminder:', error);
+        setDateError("Failed to save reminder. Please try again."); // Set error if API fails
       }
     }
+  };
+
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter" || event.key === "Backspace") {
+      event.stopPropagation();
+    }
+  };
+
+  const handleCancel = () => {
     setOpenDateTimePicker(false);
+    setSelectedDateTime(new Date()); // Reset to current date/time
+    setDateError(""); // Clear error on cancel
   };
 
   const colors = [
@@ -350,17 +383,58 @@ const NoteActions = ({ handleNoteList, note, container, onColorChange }) => {
           </Menu>
         </>
       )}
-      <Dialog open={openDateTimePicker} onClose={() => setOpenDateTimePicker(false)}>
+      <Dialog 
+        open={openDateTimePicker} 
+        onClose={(event, reason) => {
+          if (reason !== 'backdropClick' && reason !== 'escapeKeyDown') {
+            setOpenDateTimePicker(false);
+          }
+        }}
+        onKeyDown={handleKeyDown}
+      >
         <DialogTitle>Pick Date & Time</DialogTitle>
         <DialogContent>
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <DesktopDateTimePicker
               value={selectedDateTime}
-              onChange={handleDateTimeSelect}
-              renderInput={(params) => <TextField {...params} />}
+              onChange={(newValue) => {
+                setSelectedDateTime(newValue);
+                setDateError(""); // Clear error when date changes
+                console.log("onChange DateTime:", newValue); // Debug log
+              }}
+              onAccept={handleDateTimeSelect}
+              format="MM/dd/yyyy hh:mm a"
+              minDate={new Date()}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Select Date & Time"
+                  onKeyDown={handleKeyDown}
+                  fullWidth
+                  error={!!dateError}
+                  helperText={dateError}
+                />
+              )}
             />
           </LocalizationProvider>
+          {dateError && (
+            <div style={{ color: "#d32f2f", fontSize: "12px", marginTop: "8px" }}>
+              {dateError}
+            </div>
+          )}
         </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCancel} color="secondary">
+            Cancel
+          </Button>
+          <Button 
+            onClick={() => handleDateTimeSelect(selectedDateTime)} 
+            color="primary"
+            disabled={!selectedDateTime || !!dateError}
+          >
+            Save
+          </Button>
+        </DialogActions>
       </Dialog>
     </div>
   );

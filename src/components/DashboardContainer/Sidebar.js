@@ -19,7 +19,7 @@ function Sidebar({ isCollapsed }) {
           <img src={Keep5} alt="p" className="P" /> {!isCollapsed && "Notes"}
         </NavLink>
         <NavLink
-          to="/reminders"
+          to="/reminders" // Original incorrect path
           className={({ isActive }) => `sidebar-item ${isActive ? "active" : ""}`}
         >
           <img src={Keep1} alt="p" className="P" /> {!isCollapsed && "Reminders"}

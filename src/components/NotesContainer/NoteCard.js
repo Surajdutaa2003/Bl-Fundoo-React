@@ -11,12 +11,16 @@ import ArchiveIcon from "@mui/icons-material/Archive";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import AccessTimeIcon from "@mui/icons-material/AccessTime"; // Clock icon for reminder
 import { updateNote } from "../../services/api";
 
+// Helper function to check if a date is valid
+const isValidDate = (date) => {
+  return date instanceof Date && !isNaN(date);
+};
+
 function NoteCard({ note, handleNoteList, container, onEdit }) {
-  const [backgroundColor, setBackgroundColor] = useState(
-    note?.color || "#FFFFFF"
-  );
+  const [backgroundColor, setBackgroundColor] = useState(note?.color || "#FFFFFF");
   const [isHovered, setIsHovered] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [editedNote, setEditedNote] = useState({ ...note });
@@ -88,6 +92,21 @@ function NoteCard({ note, handleNoteList, container, onEdit }) {
     }
   };
 
+  // Only render reminder badge if reminder is a valid date
+  const renderReminder = () => {
+    if (note.reminder && isValidDate(new Date(note.reminder))) {
+      return (
+        <div className="reminder-badge">
+          <AccessTimeIcon fontSize="small" />
+          <span>
+            {new Date(note.reminder).toLocaleDateString("en-US", { month: "short", day: "numeric" })} {new Date(note.reminder).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true })}
+          </span>
+        </div>
+      );
+    }
+    return null; // No badge if no valid reminder
+  };
+
   return (
     <>
       <div
@@ -100,10 +119,9 @@ function NoteCard({ note, handleNoteList, container, onEdit }) {
           <h3 onClick={handleTitleOrDescriptionClick}>{note.title || "Untitled"}</h3>
           <p onClick={handleTitleOrDescriptionClick}>{note.description || "No description available"}</p>
         </div>
+        {renderReminder()} {/* Conditionally render reminder badge */}
         <div
-          className={`note-actions-container ${
-            container === "trash" ? "trash-actions" : ""
-          }`}
+          className={`note-actions-container ${container === "trash" ? "trash-actions" : ""}`}
         >
           {container === "trash" ? (
             isHovered && (
@@ -136,7 +154,7 @@ function NoteCard({ note, handleNoteList, container, onEdit }) {
               position: "absolute",
               background: "#ffffff",
               boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
-              borderRadius: "8px",
+              // border-radius: "8px",
               padding: "16px",
             }}
           >
@@ -201,3 +219,4 @@ function NoteCard({ note, handleNoteList, container, onEdit }) {
 }
 
 export default NoteCard;
+// 
