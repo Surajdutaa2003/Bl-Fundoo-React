@@ -1,21 +1,22 @@
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 import Login from "../components/Login/login";
 import RegisterPage from "../components/Register/Registerpage";
+import Dashboard from "../components/DashboardContainer/Dashboard";
 import Notes from "../components/NotesContainer/Notes";
 import Archive from "../components/Archives/Archive";
 import TrashNotes from "../components/TrashNotes/TrashNotes";
-import ProtectedRoute from "../components/ProtectedRoutes"; // Protected Routes Handle Here
+import ProtectedRoute from "../components/ProtectedRoutes";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <ProtectedRoute />, // ProtectedRoute now handles login & dashboard redirects
+    element: <ProtectedRoute />,
     children: [
-      { path: "", element: <Login /> }, // Login Page
-      { path: "register", element: <RegisterPage /> }, // Register Page
+      { path: "", element: <Login /> },
+      { path: "register", element: <RegisterPage /> },
       {
         path: "dashboard",
-        element: <Outlet />, // Ensures nested routing works correctly
+        element: <Dashboard />,
         children: [
           { path: "", element: <Notes /> },
           { path: "archive", element: <Archive /> },

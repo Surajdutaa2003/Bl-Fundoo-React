@@ -11,11 +11,10 @@ import ArchiveIcon from "@mui/icons-material/Archive";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
-import AccessTimeIcon from "@mui/icons-material/AccessTime"; // Clock icon for reminder
-import CloseIcon from "@mui/icons-material/Close"; // Import CloseIcon for the cross button
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import CloseIcon from "@mui/icons-material/Close";
 import { updateNote, removeReminderNotes } from "../../services/api";
 
-// Helper function to check if a date is valid
 const isValidDate = (date) => {
   return date instanceof Date && !isNaN(date);
 };
@@ -76,16 +75,16 @@ function NoteCard({ note, handleNoteList, container, onEdit }) {
       const updatedData = {
         title: editedNote.title,
         description: editedNote.description,
+        color: backgroundColor, // Include the current background color
       };
       const updatedNoteData = await updateNote(note.id, updatedData);
-      handleNoteList(
-        {
-          ...note,
-          title: updatedData.title,
-          description: updatedData.description,
-        },
-        "update"
-      );
+      // Merge the local updates with the API response, ensuring color is preserved
+      const finalUpdatedNote = {
+        ...note,
+        ...updatedData,
+        ...(updatedNoteData || {}), // Use API response if available, fallback to local data
+      };
+      handleNoteList(finalUpdatedNote, "update");
       setIsExpanded(false);
     } catch (error) {
       console.error("❌ Failed to update note:", error.message);
@@ -97,7 +96,6 @@ function NoteCard({ note, handleNoteList, container, onEdit }) {
     try {
       await removeReminderNotes(note.id);
       console.log(`Reminder removed for note ${note.id}`);
-      // Update the note to remove the reminder
       handleNoteList({ ...note, reminder: null }, "update");
     } catch (error) {
       console.error("Failed to remove reminder:", error);
@@ -105,7 +103,6 @@ function NoteCard({ note, handleNoteList, container, onEdit }) {
     }
   };
 
-  // Only render reminder badge if reminder is a valid date
   const renderReminder = () => {
     if (note.reminder && isValidDate(new Date(note.reminder))) {
       return (
@@ -125,7 +122,7 @@ function NoteCard({ note, handleNoteList, container, onEdit }) {
         </div>
       );
     }
-    return null; // No badge if no valid reminder
+    return null;
   };
 
   return (
@@ -140,7 +137,7 @@ function NoteCard({ note, handleNoteList, container, onEdit }) {
           <h3 onClick={handleTitleOrDescriptionClick}>{note.title || "Untitled"}</h3>
           <p onClick={handleTitleOrDescriptionClick}>{note.description || "No description available"}</p>
         </div>
-        {renderReminder()} {/* Conditionally render reminder badge */}
+        {renderReminder()}
         <div
           className={`note-actions-container ${container === "trash" ? "trash-actions" : ""}`}
         >

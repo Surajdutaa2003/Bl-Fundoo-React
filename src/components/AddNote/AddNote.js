@@ -1,19 +1,18 @@
 import React, { useState, useRef, useEffect } from "react";
 import { IconButton } from "@mui/material";
-// import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank"; // For collapsed state
-import CreateIcon from "@mui/icons-material/Create"; // For collapsed state
-import ImageIcon from "@mui/icons-material/Image"; // For collapsed state
-import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone"; // For pin and bell icons
-import PersonAddIcon from "@mui/icons-material/PersonAdd"; // For person add icon
-import PaletteIcon from "@mui/icons-material/Palette"; // For palette icon
-import ArchiveIcon from "@mui/icons-material/Archive"; // For archive icon
-import MoreVertIcon from "@mui/icons-material/MoreVert"; // For more options
-import ArrowBackIcon from "@mui/icons-material/ArrowBack"; // For arrow back
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward"; // For arrow forward
+import CreateIcon from "@mui/icons-material/Create";
+import ImageIcon from "@mui/icons-material/Image";
+import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import PaletteIcon from "@mui/icons-material/Palette";
+import ArchiveIcon from "@mui/icons-material/Archive";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import PushPinOutlinedIcon from '@mui/icons-material/PushPinOutlined';
 import CheckBoxOutlinedIcon from '@mui/icons-material/CheckBoxOutlined';
 import { addNote } from "../../services/api";
-import "../DashboardContainer/Dashboard.css"; // Using Dashboard.css for styling
+import "../DashboardContainer/Dashboard.css";
 
 function AddNote({ onNoteAdded }) {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -26,46 +25,25 @@ function AddNote({ onNoteAdded }) {
 
   const handleAddNote = async (e) => {
     e.stopPropagation();
-    // setIsExpanded(false);
-  
     if (!note.title.trim() && !note.description.trim()) {
       setIsExpanded(false);
       return;
     }
-  
-    // // **Optimistically update UI first**
-    // const tempNote = { ...note, _id: Date.now().toString() }; // Temporary ID
-    // onNoteAdded(tempNote); // **Instant UI update**
 
-    if(isExpanded){
-      console.log("Expanded",isExpanded)
+    if (isExpanded) {
+      console.log("Expanded", isExpanded);
       addNote(note)
         .then((res) => {
-          // console.log(res)
-          onNoteAdded(res?.status?.details,"add"); // **Instant UI update**
-          setNote({ title: "", description: "" }); // Reset form after successful submission
-          setIsExpanded(false); 
+          onNoteAdded(res?.status?.details, "add");
+          setNote({ title: "", description: "" });
+          setIsExpanded(false);
         })
         .catch(err => {
-          console.log(err.message)
-        })
-      // try {
-      //   const result = await addNote(note);
-      //   console.log("Added Note:", result);
-      //   const newNote = result?.data?.data;
-      //   if(newNote){
-      //     onNoteAdded(newNote,"add"); 
-      //   }
-      // } catch (err) {
-      //   console.error("Error adding note:", err);
-      // } finally {
-      //   setNote({ title: "", description: "" });
-      //   setIsExpanded(false);
-      // }
+          console.log(err.message);
+        });
     }
   };
-  
-  // Close note when clicking outside
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (noteRef.current && !noteRef.current.contains(event.target)) {
@@ -82,7 +60,6 @@ function AddNote({ onNoteAdded }) {
   return (
     <div className="note-input" ref={noteRef} onClick={() => setIsExpanded(true)}>
       {!isExpanded ? (
-        // Collapsed State (Simple Input with Three Icons)
         <div className="collapsed-note-input">
           <input
             type="text"
@@ -105,7 +82,6 @@ function AddNote({ onNoteAdded }) {
           </div>
         </div>
       ) : (
-        // Expanded State (Matching Your Image)
         <div className="expanded-note-input">
           <div className="note-input-header">
             <input
@@ -117,7 +93,7 @@ function AddNote({ onNoteAdded }) {
               className="note-input-title"
             />
             <IconButton size="small" className="pin-icon">
-              < PushPinOutlinedIcon/> {/* Pin icon as shown in the image */}
+              <PushPinOutlinedIcon />
             </IconButton>
           </div>
           <textarea
@@ -134,7 +110,7 @@ function AddNote({ onNoteAdded }) {
             <IconButton size="small">
               <PersonAddIcon />
             </IconButton>
-            <IconButton size="small" onClick={() => {/* Add color change logic if needed */}}>
+            <IconButton size="small" onClick={() => {}}>
               <PaletteIcon />
             </IconButton>
             <IconButton size="small">
@@ -163,4 +139,3 @@ function AddNote({ onNoteAdded }) {
 }
 
 export default AddNote;
-// fine

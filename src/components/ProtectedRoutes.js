@@ -1,6 +1,5 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { isAuthenticated } from "../utils/authUtils";
-import Dashboard from "../components/DashboardContainer/Dashboard"; 
 
 const ProtectedRoute = () => {
   const isAuth = isAuthenticated();
@@ -16,13 +15,7 @@ const ProtectedRoute = () => {
     return <Navigate to="/" replace />;
   }
 
-  return isAuth ? (
-    <Dashboard>
-      <Outlet />
-    </Dashboard>
-  ) : (
-    <Outlet /> // This will render login/register pages for unauthenticated users
-  );
+  return <Outlet />; // Render child routes without wrapping in Dashboard
 };
 
 export default ProtectedRoute;

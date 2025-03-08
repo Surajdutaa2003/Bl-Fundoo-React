@@ -1,9 +1,10 @@
 import React from "react";
-// import "./Dashboard.css";
 import Keep from "../../assets/image/KeepLogo.png";
 import { IconButton } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
+import DragHandleIcon from '@mui/icons-material/DragHandle';
 import "../DashboardContainer/DashboardContainer.scss";
+import Tooltip from "@mui/material/Tooltip";
 
 function Header({ toggleSidebar, userEmail, searchQuery, setSearchQuery }) {
   const profileInitial = userEmail ? userEmail.charAt(0).toUpperCase() : "?";
@@ -17,20 +18,25 @@ function Header({ toggleSidebar, userEmail, searchQuery, setSearchQuery }) {
       <IconButton onClick={toggleSidebar} className="menu-button">
         <MenuIcon />
       </IconButton>
-     
       <div className="logo-container">
         <img src={Keep} alt="Keep Logo" className="keep-logo" />
         <h1 className="h1">Keep</h1>
       </div>
-
-      <input 
-        type="text" 
-        placeholder="Search" 
+      <input
+        type="text"
+        placeholder="Search"
         className="search-bar"
         value={searchQuery}
         onChange={handleSearchChange}
       />
-
+      <Tooltip title="list view" placement="top" arrow 
+  sx={{ 
+    
+  }}>
+  <IconButton size="small" className="drag-handle-button">
+    <DragHandleIcon fontSize="medium" />
+  </IconButton>
+</Tooltip>
       <div className="profile-icon">{profileInitial}</div>
     </div>
   );
