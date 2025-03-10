@@ -13,13 +13,13 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import CloseIcon from "@mui/icons-material/Close";
-import { updateNote, removeReminderNotes } from "../../services/api";
+import { updateNote, removeReminderNotes, addUpdateReminderNotes } from "../../services/api";
 
 const isValidDate = (date) => {
   return date instanceof Date && !isNaN(date);
 };
 
-function NoteCard({ note, handleNoteList, container, onEdit }) {
+function NoteCard({ note, handleNoteList, container, onEdit, isGridView }) {
   const [backgroundColor, setBackgroundColor] = useState(note?.color || "#FFFFFF");
   const [isHovered, setIsHovered] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -75,20 +75,33 @@ function NoteCard({ note, handleNoteList, container, onEdit }) {
       const updatedData = {
         title: editedNote.title,
         description: editedNote.description,
-        color: backgroundColor, // Include the current background color
+        color: backgroundColor,
       };
+      console.log("Sending to updateNote:", { noteId: note.id, ...updatedData });
       const updatedNoteData = await updateNote(note.id, updatedData);
-      // Merge the local updates with the API response, ensuring color is preserved
+      console.log("Received from updateNote:", updatedNoteData);
       const finalUpdatedNote = {
         ...note,
         ...updatedData,
-        ...(updatedNoteData || {}), // Use API response if available, fallback to local data
+        ...(updatedNoteData?.data || {}),
       };
       handleNoteList(finalUpdatedNote, "update");
       setIsExpanded(false);
     } catch (error) {
       console.error("❌ Failed to update note:", error.message);
       alert("Failed to update note. Please try again.");
+    }
+  };
+
+  const handleSetReminder = async () => {
+    try {
+      const reminderDate = new Date(Date.now() + 24 * 60 * 60 * 1000);
+      console.log("Setting reminder for note:", note.id, "at", reminderDate);
+      await addUpdateReminderNotes(note.id, reminderDate);
+      handleNoteList({ ...note, reminder: reminderDate }, "update");
+    } catch (error) {
+      console.error("Failed to set reminder:", error);
+      alert("Failed to set reminder. Please try again.");
     }
   };
 
@@ -106,19 +119,21 @@ function NoteCard({ note, handleNoteList, container, onEdit }) {
   const renderReminder = () => {
     if (note.reminder && isValidDate(new Date(note.reminder))) {
       return (
-        <div className="reminder-badge">
-          <AccessTimeIcon fontSize="small" />
-          <span>
-            {new Date(note.reminder).toLocaleDateString("en-US", { month: "short", day: "numeric" })}{" "}
-            {new Date(note.reminder).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true })}
-          </span>
-          <IconButton
-            size="small"
-            className="reminder-remove-button"
-            onClick={handleRemoveReminder}
-          >
-            <CloseIcon fontSize="small" />
-          </IconButton>
+        <div className="reminder-container">
+          <div className="reminder-badge">
+            <AccessTimeIcon fontSize="small" />
+            <span>
+              {new Date(note.reminder).toLocaleDateString("en-US", { month: "short", day: "numeric" })}{" "}
+              {new Date(note.reminder).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true })}
+            </span>
+            <IconButton
+              size="small"
+              className="reminder-remove-button"
+              onClick={handleRemoveReminder}
+            >
+              <CloseIcon fontSize="small" />
+            </IconButton>
+          </div>
         </div>
       );
     }
@@ -128,29 +143,24 @@ function NoteCard({ note, handleNoteList, container, onEdit }) {
   return (
     <>
       <div
-        className="note-card relative p-4 border rounded-md shadow-md"
+        className={`note-card relative p-4 border rounded-md shadow-md ${isGridView ? "grid-view-card" : "list-view-card"}`}
         style={{ backgroundColor, position: "relative" }}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
+        onMouseEnter={() => {
+          console.log(`Hovering over note ${note.id} in container: ${container}`);
+          setIsHovered(true);
+        }}
+        onMouseLeave={() => {
+          console.log(`Mouse left note ${note.id} in container: ${container}`);
+          setIsHovered(false);
+        }}
       >
         <div className="note-content">
           <h3 onClick={handleTitleOrDescriptionClick}>{note.title || "Untitled"}</h3>
           <p onClick={handleTitleOrDescriptionClick}>{note.description || "No description available"}</p>
         </div>
         {renderReminder()}
-        <div
-          className={`note-actions-container ${container === "trash" ? "trash-actions" : ""}`}
-        >
-          {container === "trash" ? (
-            isHovered && (
-              <NoteActions
-                handleNoteList={handleNoteList}
-                note={note}
-                container={container}
-                onColorChange={handleColorChange}
-              />
-            )
-          ) : (
+        <div className={`note-actions-container ${container === "trash" ? "trash-actions" : ""}`}>
+          {isHovered && (
             <NoteActions
               handleNoteList={handleNoteList}
               note={note}
@@ -195,7 +205,7 @@ function NoteCard({ note, handleNoteList, container, onEdit }) {
               className="note-input-description"
             />
             <div className="note-input-actions">
-              <IconButton size="small">
+              <IconButton size="small" onClick={handleSetReminder}>
                 <NotificationsNoneIcon />
               </IconButton>
               <IconButton size="small">
@@ -223,10 +233,7 @@ function NoteCard({ note, handleNoteList, container, onEdit }) {
                 Close
               </button>
               <span className="edited-date">
-                {new Date().toLocaleDateString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                })}
+                {new Date().toLocaleDateString("en-US", { month: "short", day: "numeric" })}
               </span>
             </div>
           </div>

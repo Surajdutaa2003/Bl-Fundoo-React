@@ -20,9 +20,10 @@ import {
   deletePermanently, 
   changeNoteColor,
   addUpdateReminderNotes,
-  removeReminderNotes // Add the new import
+  removeReminderNotes
 } from "../../services/api";
 import "../NotesAction/NotesAction.scss";
+import Tooltip from "@mui/material/Tooltip";
 
 const NoteActions = ({ handleNoteList, note, container, onColorChange }) => {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -51,13 +52,13 @@ const NoteActions = ({ handleNoteList, note, container, onColorChange }) => {
         await archiveNote(note?.id, false);
         handleNoteList(note, "unarchive");
       } else if (action === "delete") {
-        await deleteForeverNote(note?.id);
-        handleNoteList(note, "delete");
+        await deleteForeverNote(note?.id); // Move to trash
+        handleNoteList(note, "trash");
       } else if (action === "restore") {
-        await restoreNote(note?.id);
+        await restoreNote(note?.id); // Move back to notes
         handleNoteList(note, "restore");
       } else if (action === "permanentDelete") {
-        await deletePermanently(note?.id);
+        await deletePermanently(note?.id); // Permanent deletion
         handleNoteList(note, "delete");
       }
     } catch (err) {
@@ -139,26 +140,38 @@ const NoteActions = ({ handleNoteList, note, container, onColorChange }) => {
 
   return (
     <div className="note-actions">
-      {container === "notes" && (
+      {(container === "notes" || container === "reminders") && (
         <>
-          <IconButton size="small" onClick={handleReminderMenuOpen}>
-            <NotificationsNoneIcon />
-          </IconButton>
-          <IconButton size="small">
-            <PersonAddIcon />
-          </IconButton>
-          <IconButton size="small" onClick={handleColorMenuOpen}>
-            <PaletteIcon />
-          </IconButton>
-          <IconButton size="small">
-            <ImageIcon />
-          </IconButton>
-          <IconButton size="small" onClick={() => handleActionClick("archive")}>
-            <ArchiveIcon />
-          </IconButton>
-          <IconButton size="small" onClick={handleMenuOpen}>
-            <MoreVertIcon />
-          </IconButton>
+          <Tooltip title="Set Reminder" arrow>
+            <IconButton size="small" onClick={handleReminderMenuOpen}>
+              <NotificationsNoneIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Collaborate" arrow>
+            <IconButton size="small">
+              <PersonAddIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Change Color" arrow>
+            <IconButton size="small" onClick={handleColorMenuOpen}>
+              <PaletteIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Add Image" arrow>
+            <IconButton size="small">
+              <ImageIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Archive" arrow>
+            <IconButton size="small" onClick={() => handleActionClick("archive")}>
+              <ArchiveIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="More Options" arrow>
+            <IconButton size="small" onClick={handleMenuOpen}>
+              <MoreVertIcon />
+            </IconButton>
+          </Tooltip>
           <Menu anchorEl={anchorEl} open={open} onClose={handleMenuClose}>
             <MenuItem onClick={() => handleActionClick("delete")}>Delete Note</MenuItem>
             <MenuItem onClick={() => handleActionClick("add-label")}>Add Label</MenuItem>
@@ -233,26 +246,39 @@ const NoteActions = ({ handleNoteList, note, container, onColorChange }) => {
           </Menu>
         </>
       )}
+
       {container === "archive" && (
         <>
-          <IconButton size="small" onClick={handleReminderMenuOpen}>
-            <NotificationsNoneIcon />
-          </IconButton>
-          <IconButton size="small">
-            <PersonAddIcon />
-          </IconButton>
-          <IconButton size="small" onClick={handleColorMenuOpen}>
-            <PaletteIcon />
-          </IconButton>
-          <IconButton size="small">
-            <ImageIcon />
-          </IconButton>
-          <IconButton size="small" onClick={() => handleActionClick("unarchive")}>
-            <UnarchiveIcon />
-          </IconButton>
-          <IconButton size="small" onClick={handleMenuOpen}>
-            <MoreVertIcon />
-          </IconButton>
+          <Tooltip title="Set Reminder" arrow>
+            <IconButton size="small" onClick={handleReminderMenuOpen}>
+              <NotificationsNoneIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Collaborate" arrow>
+            <IconButton size="small">
+              <PersonAddIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Change Color" arrow>
+            <IconButton size="small" onClick={handleColorMenuOpen}>
+              <PaletteIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Add Image" arrow>
+            <IconButton size="small">
+              <ImageIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Unarchive" arrow>
+            <IconButton size="small" onClick={() => handleActionClick("unarchive")}>
+              <UnarchiveIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="More Options" arrow>
+            <IconButton size="small" onClick={handleMenuOpen}>
+              <MoreVertIcon />
+            </IconButton>
+          </Tooltip>
           <Menu anchorEl={anchorEl} open={open} onClose={handleMenuClose}>
             <MenuItem onClick={() => handleActionClick("delete")}>Delete Note</MenuItem>
             <MenuItem onClick={() => handleActionClick("add-label")}>Add Label</MenuItem>
@@ -327,17 +353,24 @@ const NoteActions = ({ handleNoteList, note, container, onColorChange }) => {
           </Menu>
         </>
       )}
+
       {container === "trash" && (
         <>
-          <IconButton size="small" onClick={handleReminderMenuOpen}>
-            <NotificationsNoneIcon />
-          </IconButton>
-          <IconButton size="small" onClick={() => handleActionClick("restore")}>
-            <RestoreFromTrashIcon />
-          </IconButton>
-          <IconButton size="small" onClick={() => handleActionClick("permanentDelete")}>
-            <DeleteForeverIcon />
-          </IconButton>
+          <Tooltip title="Set Reminder" arrow>
+            <IconButton size="small" onClick={handleReminderMenuOpen}>
+              <NotificationsNoneIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Restore" arrow>
+            <IconButton size="small" onClick={() => handleActionClick("restore")}>
+              <RestoreFromTrashIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Delete Forever" arrow>
+            <IconButton size="small" onClick={() => handleActionClick("permanentDelete")}>
+              <DeleteForeverIcon />
+            </IconButton>
+          </Tooltip>
           <Menu
             anchorEl={reminderAnchorEl}
             open={reminderOpen}
@@ -380,6 +413,7 @@ const NoteActions = ({ handleNoteList, note, container, onColorChange }) => {
           </Menu>
         </>
       )}
+
       <Dialog 
         open={openDateTimePicker} 
         onClose={(event, reason) => {

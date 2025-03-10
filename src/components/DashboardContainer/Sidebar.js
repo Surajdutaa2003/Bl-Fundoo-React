@@ -14,33 +14,34 @@ function Sidebar({ isCollapsed }) {
       <div className="sidebar-items">
         <NavLink
           to="/dashboard"
+          end
           className={({ isActive }) => `sidebar-item ${isActive ? "active" : ""}`}
         >
-          <img src={Keep5} alt="p" className="P" /> {!isCollapsed && "Notes"}
+          <img src={Keep5} alt="Notes" className="P" /> {!isCollapsed && "Notes"}
         </NavLink>
         <NavLink
-          to="/reminders" // Original incorrect path
+          to="/dashboard/reminders" // Updated to match the route
           className={({ isActive }) => `sidebar-item ${isActive ? "active" : ""}`}
         >
-          <img src={Keep1} alt="p" className="P" /> {!isCollapsed && "Reminders"}
+          <img src={Keep1} alt="Reminders" className="P" /> {!isCollapsed && "Reminders"}
         </NavLink>
         <NavLink
           to="/edit-labels"
           className={({ isActive }) => `sidebar-item ${isActive ? "active" : ""}`}
         >
-          <img src={Keep2} alt="p" className="P" /> {!isCollapsed && "Edit Labels"}
+          <img src={Keep2} alt="Edit Labels" className="P" /> {!isCollapsed && "Edit Labels"}
         </NavLink>
         <NavLink
           to="/dashboard/archive"
           className={({ isActive }) => `sidebar-item ${isActive ? "active" : ""}`}
         >
-          <img src={Keep3} alt="p" className="P" /> {!isCollapsed && "Archive"}
+          <img src={Keep3} alt="Archive" className="P" /> {!isCollapsed && "Archive"}
         </NavLink>
         <NavLink
           to="/dashboard/trash"
           className={({ isActive }) => `sidebar-item ${isActive ? "active" : ""}`}
         >
-          <img src={Keep4} alt="p" className="P" /> {!isCollapsed && "Trash"}
+          <img src={Keep4} alt="Trash" className="P" /> {!isCollapsed && "Trash"}
         </NavLink>
       </div>
     </div>

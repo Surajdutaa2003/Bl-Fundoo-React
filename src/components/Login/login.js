@@ -17,7 +17,7 @@ function Login() {
     try {
       const data = await loginUser(email, password);
       localStorage.setItem("fundoo-token", data.id); // Store token
-      alert("Login successful!");
+      // alert("Login successful!");
       navigate("/dashboard");
     } catch (err) {
       setError(err);

@@ -8,7 +8,7 @@ function Archive() {
   const [archivedNotes, setArchivedNotes] = useState([]);
   const [isLoading, setIsLoading] = useState(false); // Added loading state
   const [error, setError] = useState(null); // Added error state
-  const { searchQuery = "" } = useOutletContext() || {}; // Access searchQuery from Dashboard
+  const { searchQuery = "",isGridView } = useOutletContext() || {}; // Access searchQuery from Dashboard
 
   // Debug searchQuery to confirm it's being received
   console.log("Archive rendering with searchQuery:", searchQuery);
@@ -67,7 +67,7 @@ function Archive() {
       {error && <p className="error">{error}</p>}
       
       {!isLoading && !error && (
-        <div className="notes-grid">
+        <div className={`notes-grid ${isGridView ? "grid-view" : "list-view"}`}>
           {filteredNotes.length > 0 ? (
             filteredNotes.map((note) => (
               <NoteCard 
@@ -75,6 +75,7 @@ function Archive() {
                 note={note} 
                 handleNoteList={handleNotes} 
                 container="archive" 
+                isGridView={isGridView}
               />
             ))
           ) : (

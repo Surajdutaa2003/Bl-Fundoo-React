@@ -1,50 +1,48 @@
 import React, { useEffect, useState, useCallback, useMemo } from "react";
 import NoteCard from "./NoteCard";
 import AddNote from "../../components/AddNote/AddNote";
-import { getUserNotes } from "../../services/api";
+import { getUserNotes, deletePermanently } from "../../services/api";
 import { useOutletContext } from "react-router-dom";
 import "../NotesContainer/NotesContainer.scss";
-import { IconButton } from "@mui/material";
-import PushPinOutlinedIcon from "@mui/icons-material/PushPinOutlined";
-import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
-import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import PaletteIcon from "@mui/icons-material/Palette";
-import ImageIcon from "@mui/icons-material/Image";
-import ArchiveIcon from "@mui/icons-material/Archive";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
-function Notes() {
+function Notes({ container = "notes" }) {
   const [notesList, setNotesList] = useState([]);
-  const [editingNote, setEditingNote] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const { searchQuery = "" } = useOutletContext() || {};
+  const { searchQuery = "", setTrashedNotes, isGridView } = useOutletContext() || {};
 
-  console.log("Notes rendering with searchQuery:", searchQuery);
+  console.log("Notes rendering with searchQuery:", searchQuery, "Container:", container, "NotesList:", notesList, "isGridView:", isGridView);
 
-  useEffect(() => {
-    fetchNotes();
-  }, []);
-
-  const fetchNotes = async () => {
+  const fetchNotes = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     try {
-      const res = await getUserNotes();
-      console.log("Raw API response:", res);
+      const res = await getUserNotes({ cache: "no-store" });
+      console.log("Raw API response from getUserNotes:", res);
       const notes = Array.isArray(res) ? res : Array.isArray(res.data) ? res.data : res.data?.details || res.data?.data || [];
-      const activeNotes = notes.filter((note) => !note.isArchived);
-      console.log("Active notes:", activeNotes);
+      const activeNotes = notes.filter((note) => !note.isArchived && !note.isDeleted);
+      const trashedNotes = notes.filter((note) => note.isDeleted);
+      console.log("Fetched Active notes:", activeNotes, "Fetched Trashed notes:", trashedNotes);
       setNotesList(activeNotes.map(note => ({
-        id: note._id || note.id || Date.now().toString(),
+        id: note._id || note.id,
         title: note.title || "",
         description: note.description || "",
         color: note.color || "#FFFFFF",
         isArchived: note.isArchived || false,
+        isDeleted: note.isDeleted || false,
         reminder: note.reminder || null,
       })));
+      if (setTrashedNotes) {
+        setTrashedNotes(trashedNotes.map(note => ({
+          id: note._id || note.id,
+          title: note.title || "",
+          description: note.description || "",
+          color: note.color || "#FFFFFF",
+          isArchived: note.isArchived || false,
+          isDeleted: note.isDeleted || true,
+          reminder: note.reminder || null,
+        })));
+      }
     } catch (err) {
       console.error("Error fetching notes:", err);
       setError("Failed to load notes. Please try again.");
@@ -52,7 +50,11 @@ function Notes() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [setTrashedNotes]);
+
+  useEffect(() => {
+    fetchNotes();
+  }, [container, fetchNotes]);
 
   const filteredNotes = useMemo(() => {
     const result = notesList.filter(note => 
@@ -64,42 +66,69 @@ function Notes() {
   }, [notesList, searchQuery]);
 
   const updateNotesList = useCallback((updatedNote, action) => {
-    console.log("Updating notes list with:", updatedNote, "Action:", action);
+    console.log("Updating notes list with:", updatedNote, "Action:", action, "Current NotesList:", notesList);
     if (action === "add") {
       setNotesList(prevNotes => [updatedNote, ...prevNotes]);
-    } else if (action === "archive" || action === "delete" || action === "trash") {
+    } else if (action === "archive") {
       setNotesList(prev => prev.filter((note) => note.id !== updatedNote.id));
+    } else if (action === "trash") {
+      setNotesList(prev => prev.filter((note) => note.id !== updatedNote.id));
+      if (setTrashedNotes) {
+        setTrashedNotes(prev => [...prev, { ...updatedNote, isDeleted: true }]);
+      }
+      fetchNotes();
+    } else if (action === "restore") {
+      if (setTrashedNotes) {
+        setTrashedNotes(prev => prev.filter((note) => note.id !== updatedNote.id));
+      }
+      setNotesList(prev => [...prev, { ...updatedNote, isDeleted: false }]);
+      fetchNotes();
+    } else if (action === "delete") {
+      if (setTrashedNotes) {
+        setTrashedNotes(prev => prev.filter((note) => note.id !== updatedNote.id));
+      }
+      handlePermanentDelete(updatedNote.id);
+      fetchNotes();
     } else if (action === "update") {
       setNotesList(prevNotes => prevNotes.map(note => 
         note.id === updatedNote.id ? updatedNote : note
       ));
+      if (setTrashedNotes) {
+        setTrashedNotes(prevNotes => prevNotes.map(note => 
+          note.id === updatedNote.id ? updatedNote : note
+        ));
+      }
     }
-    if (action === "update" && editingNote && editingNote.id === updatedNote.id) {
-      setEditingNote(updatedNote);
-    }
-  }, [editingNote]);
+  }, [setTrashedNotes, fetchNotes]);
 
-  const handleEdit = (note) => {
-    setEditingNote(note);
+  const handlePermanentDelete = async (noteId) => {
+    try {
+      const response = await deletePermanently(noteId);
+      console.log(`Permanently deleted note ${noteId}, Response:`, response);
+    } catch (error) {
+      console.error("Failed to permanently delete note:", error);
+      alert("Failed to delete note permanently. Please try again.");
+    }
   };
 
   return (
     <div className="notes-section">
-      <AddNote onNoteAdded={(newNote) => updateNotesList(newNote, "add")} />
+      {container === "notes" && <AddNote onNoteAdded={(newNote) => updateNotesList(newNote, "add")} />}
       
       {isLoading && <p>Loading notes...</p>}
       {error && <p className="error">{error}</p>}
       
       {!isLoading && !error && (
-        <div className="notes-grid">
+        <div className={`notes-grid ${isGridView ? "grid-view" : "list-view"}`}>
           {filteredNotes.length > 0 ? (
             filteredNotes.map((note) => (
               <NoteCard 
                 key={note.id}
                 handleNoteList={updateNotesList} 
                 note={note} 
-                container="notes" 
-                onEdit={handleEdit}
+                container={container} 
+                onEdit={() => {}}
+                isGridView={isGridView}
               />
             ))
           ) : (
@@ -107,67 +136,6 @@ function Notes() {
           )}
         </div>
       )}
-
-      {/* {editingNote && (
-        <div className="expanded-note-overlay" onClick={() => setEditingNote(null)}>
-          <div className="expanded-note" onClick={(e) => e.stopPropagation()}>
-            <div className="note-input-header">
-              <input
-                type="text"
-                placeholder="Title"
-                value={editingNote.title || ""}
-                onChange={(e) => updateNotesList({ ...editingNote, title: e.target.value }, "update")}
-                className="note-input-title"
-              />
-              <IconButton size="small" className="pin-icon" aria-label="Pin note">
-                <PushPinOutlinedIcon />
-              </IconButton>
-            </div>
-            <textarea
-              placeholder="Note"
-              value={editingNote.description || ""}
-              onChange={(e) => updateNotesList({ ...editingNote, description: e.target.value }, "update")}
-              className="note-input-description"
-            />
-            <div className="note-input-actions">
-              <IconButton size="small" aria-label="Add reminder">
-                <NotificationsNoneIcon />
-              </IconButton>
-              <IconButton size="small" aria-label="Collaborate">
-                <PersonAddIcon />
-              </IconButton>
-              <IconButton size="small" aria-label="Change color">
-                <PaletteIcon />
-              </IconButton>
-              <IconButton size="small" aria-label="Add image">
-                <ImageIcon />
-              </IconButton>
-              <IconButton 
-                size="small" 
-                aria-label="Archive note"
-                onClick={() => updateNotesList(editingNote, "archive")}
-              >
-                <ArchiveIcon />
-              </IconButton>
-              <IconButton size="small" aria-label="More options">
-                <MoreVertIcon />
-              </IconButton>
-              <IconButton size="small" aria-label="Undo">
-                <ArrowBackIcon />
-              </IconButton>
-              <IconButton size="small" aria-label="Redo">
-                <ArrowForwardIcon />
-              </IconButton>
-              <button className="close-button" onClick={() => setEditingNote(null)}>
-                Close
-              </button>
-              <span className="edited-date">
-                {new Date().toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-              </span>
-            </div>
-          </div>
-        </div>
-      )} */}
     </div>
   );
 }

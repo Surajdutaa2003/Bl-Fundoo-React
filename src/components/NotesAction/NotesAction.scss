@@ -4,11 +4,13 @@ $black: #000000;
 
 // Note Actions
 .note-actions {
+  position: relative;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding-top: 10px;
   transition: opacity 0.2s ease-in-out;
+  top: 20px;
 
   .MuiSvgIcon-root {
     font-size: 20px;
@@ -50,5 +52,35 @@ $black: #000000;
     .emoji {
       font-size: 16px;
     }
+  }
+}
+.reminder-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background-color: #f1f3f4; // Light gray background
+  color: #5f6368; // Dark gray text
+  font-size: 12px;
+  padding: 6px 10px;
+  border-radius: 16px;
+  width: fit-content;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+
+  .reminder-icon {
+    font-size: 16px;
+    color: #5f6368;
+  }
+
+  .close-btn {
+    font-size: 14px;
+    color: #5f6368;
+    cursor: pointer;
+    opacity: 0;  // ❌ Button hidden initially
+    transition: opacity 0.2s ease-in-out;
+  }
+
+  &:hover .close-btn {
+    opacity: 1;  // ❌ Button visible on hover
   }
 }

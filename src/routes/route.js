@@ -5,6 +5,7 @@ import Dashboard from "../components/DashboardContainer/Dashboard";
 import Notes from "../components/NotesContainer/Notes";
 import Archive from "../components/Archives/Archive";
 import TrashNotes from "../components/TrashNotes/TrashNotes";
+import Reminders from "../components/Reminders/Reminders"; // Import the Reminders component
 import ProtectedRoute from "../components/ProtectedRoutes";
 
 const router = createBrowserRouter([
@@ -21,6 +22,7 @@ const router = createBrowserRouter([
           { path: "", element: <Notes /> },
           { path: "archive", element: <Archive /> },
           { path: "trash", element: <TrashNotes /> },
+          { path: "reminders", element: <Reminders /> }, // Add the Reminders route
         ],
       },
     ],

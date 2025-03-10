@@ -6,15 +6,66 @@ $black: #000000;
 $border-gray: #ccc;
 $shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 $hover-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
+$light-green: #c8e6c9;
+$light-blue: #bbdefb;
+$light-yellow: #fff9c4;
+$light-orange: #ffccbc;
+$light-purple: #e1bee7;
 
 // Notes Section
 .notes-section {
   flex: 1;
   padding: 20px;
   background: $white;
+  margin-top: 74px; // Offset for fixed header (header height is 74px)
+  padding-left: 260px; // Increased to ensure no cut-off (220px sidebar + 40px buffer)
+  height: calc(100vh - 74px); // Height from below header to bottom of viewport
+  overflow-y: auto; // Make this section scrollable
+  box-sizing: border-box; // Ensure padding is included in width calculations
+
+  // Hide the scrollbar while keeping content scrollable
+  &::-webkit-scrollbar {
+    display: none; // Hide scrollbar for Chrome, Safari, Edge
+  }
+  -ms-overflow-style: none; // Hide scrollbar for IE and Edge
+  scrollbar-width: none; // Hide scrollbar for Firefox
+
+  // Adjust padding-left when sidebar is collapsed
+  .sidebar.collapsed + & {
+    padding-left: 100px; // Adjusted to account for collapsed sidebar (60px) + 40px buffer
+  }
+
+  // Ensure the grid fits and aligns with the sidebar
+  .notes-grid {
+    max-width: 100%; // Use full available width after padding
+    margin: 0;
+    padding: 0 20px; // Add horizontal padding to maintain spacing on edges
+  }
+
+  // Grid view (2-column layout as per screenshot)
+  .notes-grid.grid-view {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); // 2-column grid
+    gap: 34px;
+    max-width: 800px; // Limit width for better readability
+  }
+
+  // List view (vertical stack, current layout)
+  .notes-grid.list-view {
+    display: flex;
+    flex-direction: column;
+    gap: 23px;
+    max-width: 600px; // Slightly narrower for list view
+  }
+
+  // Specific rule for collapsed state to enforce spacing
+  .sidebar.collapsed + & .notes-grid {
+    gap: 15px; // Re-enforce gap in collapsed state
+    padding: 0 20px; // Ensure padding doesn’t collapse
+  }
 }
 
-/* Note Input (for AddNote or Edit, shared with Dashboard but specific to Notes) */
+/* Note Input */
 .note-input {
   background: $white;
   padding: 10px;
@@ -133,24 +184,8 @@ $hover-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
           color: $black;
         }
       }
-
-      .edited-date {
-        position: absolute;
-        right: 15px;
-        bottom: 15px;
-        font-size: 12px;
-        color: $gray;
-      }
     }
   }
-}
-
-/* Notes Grid */
-.notes-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 15px;
-  margin-top: 20px;
 }
 
 /* Note Card */
@@ -158,36 +193,89 @@ $hover-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
   position: relative;
   background: $white;
   padding: 12px;
-  border-radius: 10px;
-  width: 90%;
-  max-width: 300px;
+  border-radius: 8px;
   box-shadow: $hover-shadow;
-  transition: transform 0.2s ease-in-out;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  min-height: 100px; // Ensure space for content and badge
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+  box-sizing: border-box;
+
+  // Grid view styling
+  &.grid-view-card {
+    height: 150px; // Fixed height for grid view
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow: hidden; // Prevent content overflow
+    width: 292px;
+  }
+
+  // List view styling
+  &.list-view-card {
+    display: flex
+    ;
+        flex-direction: column;
+        gap: 15px;
+        max-width: 544px;
+        position: relative;
+        left: 179px;
+        height: 197px;
+        top: 11px;
+  }
+
+  // Add colored variants based on screenshot
+  &.yellow {
+    background-color: $light-yellow;
+  }
+  &.orange {
+    background-color: $light-orange;
+  }
+  &.blue {
+    background-color: $light-blue;
+  }
+  &.purple {
+    background-color: $light-purple;
+  }
 
   &:hover {
     transform: scale(1.03);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 
     .selected-check,
     .pin-icon,
     .note-actions {
-      opacity: 1; // Show on hover (only for these elements)
+      opacity: 1;
+    }
+  }
+
+  .note-content {
+    flex: 1;
+    overflow: hidden;
+
+    h3 {
+      font-size: 16px;
+      font-weight: 500;
+      margin: 0 0 5px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
-    .reminder-badge {
-      .reminder-remove-button {
-        opacity: 1; // Show cross button on hover
-      }
+    p {
+      font-size: 14px;
+      color: $dark-gray;
+      margin: 0;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 3; // Limit to 3 lines in grid view
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
 
   .selected-check,
   .pin-icon,
   .note-actions {
-    opacity: 0; // Hidden by default
+    opacity: 0;
     transition: opacity 0.2s ease-in-out;
   }
 
@@ -221,11 +309,12 @@ $hover-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
   }
 
   .note-actions {
-    display: flex;
+    position: relative;
     justify-content: space-between;
     align-items: center;
     padding-top: 10px;
     transition: opacity 0.2s ease-in-out;
+    top: 1px;
 
     .MuiSvgIcon-root {
       font-size: 20px;
@@ -239,57 +328,31 @@ $hover-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
     }
   }
 
-  .reminder-badge {
-    position: absolute;
-    bottom: 34px;
-    left: 14px;
-    display: flex
-;
-    align-items: center;
-    background-color: #e0e0e0;
-    color: #5f6368;
-    padding: 2px 6px;
-    border-radius: 12px;
+  .timestamp {
     font-size: 12px;
-    gap: 4px;
-    width: fit-content;
+    color: $gray;
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    gap: 5px;
 
-
-    .MuiSvgIcon-root {
-      font-size: 16px; // Adjust clock icon size
-    }
-
-    span {
-      white-space: nowrap;
-    }
-
-    .reminder-remove-button {
-      opacity: 0; // Hidden by default
-      transition: opacity 0.2s ease-in-out;
-      color: $dark-gray;
-
-      &:hover {
-        color: $black;
-      }
-
-      .MuiSvgIcon-root {
-        font-size: 14px; // Smaller cross icon
-      }
+    .reminder-icon {
+      font-size: 16px;
     }
   }
 }
 
-/** Expanded Note (Positioned Above Note Card) */
+/* Expanded Note (Positioned Above Note Card) */
 .expanded-note-overlay {
   position: absolute;
-  z-index: 1000; // Ensure it’s above other content
+  z-index: 1000;
 
   .expanded-note {
-    background: #ffffff;
+    background: $white;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     border-radius: 8px;
     padding: 16px;
-    position: absolute; // Position relative to overlay
+    position: absolute;
 
     .note-input-header {
       display: flex;
@@ -307,7 +370,7 @@ $hover-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
         outline: none;
 
         &::placeholder {
-          color: #757575;
+          color: $gray;
           font-weight: normal;
         }
       }
@@ -323,28 +386,28 @@ $hover-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
       resize: none;
       font-size: 14px;
       padding: 8px;
-      min-height: 150px; // Adjust height as needed
+      min-height: 150px;
       outline: none;
 
       &::placeholder {
-        color: #757575;
+        color: $gray;
       }
     }
 
     .note-input-actions {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      gap: 8px;
       margin-top: 8px;
       border-top: 1px solid $border-gray;
       padding-top: 8px;
 
       .MuiIconButton-root {
-        color: #757575;
+        color: $gray;
         margin-right: 8px;
 
         &:hover {
-          color: #000000;
+          color: $black;
         }
       }
 
@@ -364,10 +427,43 @@ $hover-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2);
       }
 
       .edited-date {
-        color: #757575;
+        color: $gray;
         font-size: 12px;
         margin-left: auto;
       }
     }
   }
+}
+
+.reminder-container {
+  position: relative;
+  display: inline-block;
+  min-width: 100px;
+  min-height: 20px;
+}
+
+.reminder-badge {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 8px;
+}
+
+.reminder-remove-button {
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  position: absolute;
+  right: -5px;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 4px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.reminder-container:hover .reminder-remove-button {
+  opacity: 1;
 }

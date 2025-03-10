@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { IconButton } from "@mui/material";
+import { IconButton, Tooltip } from "@mui/material";
 import CreateIcon from "@mui/icons-material/Create";
 import ImageIcon from "@mui/icons-material/Image";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
@@ -70,15 +70,21 @@ function AddNote({ onNoteAdded }) {
             className="note-input-field"
           />
           <div className="note-input-icons">
-            <IconButton size="small" onClick={handleAddNote}>
-              <CheckBoxOutlinedIcon />
-            </IconButton>
-            <IconButton size="small">
-              <CreateIcon />
-            </IconButton>
-            <IconButton size="small">
-              <ImageIcon />
-            </IconButton>
+            <Tooltip title="Checklist" arrow>
+              <IconButton size="small" onClick={handleAddNote}>
+                <CheckBoxOutlinedIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Text Note" arrow>
+              <IconButton size="small">
+                <CreateIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Add Image" arrow>
+              <IconButton size="small">
+                <ImageIcon />
+              </IconButton>
+            </Tooltip>
           </div>
         </div>
       ) : (
@@ -92,9 +98,11 @@ function AddNote({ onNoteAdded }) {
               onChange={handleChange}
               className="note-input-title"
             />
-            <IconButton size="small" className="pin-icon">
-              <PushPinOutlinedIcon />
-            </IconButton>
+            <Tooltip title="Pin Note" arrow>
+              <IconButton size="small" className="pin-icon">
+                <PushPinOutlinedIcon />
+              </IconButton>
+            </Tooltip>
           </div>
           <textarea
             name="description"
@@ -104,30 +112,46 @@ function AddNote({ onNoteAdded }) {
             className="note-input-description"
           />
           <div className="note-input-actions">
-            <IconButton size="small">
-              <NotificationsNoneIcon />
-            </IconButton>
-            <IconButton size="small">
-              <PersonAddIcon />
-            </IconButton>
-            <IconButton size="small" onClick={() => {}}>
-              <PaletteIcon />
-            </IconButton>
-            <IconButton size="small">
-              <ImageIcon />
-            </IconButton>
-            <IconButton size="small" onClick={handleAddNote}>
-              <ArchiveIcon />
-            </IconButton>
-            <IconButton size="small">
-              <MoreVertIcon />
-            </IconButton>
-            <IconButton size="small">
-              <ArrowBackIcon />
-            </IconButton>
-            <IconButton size="small">
-              <ArrowForwardIcon />
-            </IconButton>
+            <Tooltip title="Set Reminder" arrow>
+              <IconButton size="small">
+                <NotificationsNoneIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Collaborate" arrow>
+              <IconButton size="small">
+                <PersonAddIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Change Color" arrow>
+              <IconButton size="small" onClick={() => {}}>
+                <PaletteIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Add Image" arrow>
+              <IconButton size="small">
+                <ImageIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Archive" arrow>
+              <IconButton size="small" onClick={handleAddNote}>
+                <ArchiveIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="More Options" arrow>
+              <IconButton size="small">
+                <MoreVertIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Undo" arrow>
+              <IconButton size="small">
+                <ArrowBackIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Redo" arrow>
+              <IconButton size="small">
+                <ArrowForwardIcon />
+              </IconButton>
+            </Tooltip>
             <button className="close-button" onClick={handleAddNote}>
               Close
             </button>
