@@ -162,7 +162,7 @@ function AddNote({ onNoteAdded }) {
         </div>
       )}
     </div>
-  );
+  );        
 }
 
-export default AddNote;
+export default AddNote;   
