@@ -156,6 +156,9 @@ function AddNote({ onNoteAdded }) {
               Close
             </button>
           </div>
+          <div>
+        hii 
+            </div>
         </div>
       )}
     </div>
