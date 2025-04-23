@@ -165,4 +165,4 @@ function AddNote({ onNoteAdded }) {
   );
 }
 
-export default AddNote;
+export default AddNote;   
